@@ -1,3 +1,5 @@
+import os
+API_KEY = os.getenv("AIzaSyC4P1WHROvLc-nNwMUnfpx4tqj5altIHpg")
 from googleapiclient.discovery import build
 
 # 🔑 Your API key (MAKE SURE it's in quotes)
