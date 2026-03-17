@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YouTube Sentiment Analyzer</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f0f0f;
+            color: white;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        input {
+            width: 75%;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            background: #ff0000;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .card {
+            background: #1c1c1c;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 350px;
+            border-radius: 8px;
+        }
+
+        .comment {
+            border-bottom: 1px solid #333;
+            padding: 10px 0;
+        }
+
+        .positive { color: #00ff88; }
+        .neutral  { color: #ccc; }
+        .negative { color: #ff4d4d; }
+        .toxic    { color: red; font-weight: bold; }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎥 YouTube Sentiment Analyzer</h1>
+
+    <form method="POST">
+        <input type="text" name="video_url" placeholder="Paste YouTube link">
+        <button type="submit">Analyze</button>
+    </form>
+
+    {% if video %}
+    <div class="card">
+        <iframe src="https://www.youtube.com/embed/{{ video_id }}"></iframe>
+        <h3>{{ video.title }}</h3>
+        <p>📺 {{ video.channel }}</p>
+        <p style="font-size: 14px; color: #aaa;">{{ video.description }}</p>
+    </div>
+    {% endif %}
+
+    {% if results %}
+    <div class="card">
+        <h3>📊 Sentiment</h3>
+        <canvas id="chart"></canvas>
+    </div>
+
+    <script>
+        new Chart(document.getElementById('chart'), {
+            type: 'bar',
+            data: {
+                labels: ['Positive', 'Neutral', 'Negative'],
+                datasets: [{
+                    data: [
+                        {{ results.positive }},
+                        {{ results.neutral }},
+                        {{ results.negative }}
+                    ]
+                }]
+            }
+        });
+    </script>
+    {% endif %}
+
+    {% if comments %}
+    <div class="card">
+        <h3>💬 Comments</h3>
+
+        {% for c in comments %}
+        <div class="comment">
+            <span class="{{ c.sentiment }}">{{ c.sentiment.upper() }}</span>
+            {% if c.toxic %}
+                <span class="toxic"> ☠️ TOXIC</span>
+            {% endif %}
+            <p>{{ c.text }}</p>
+        </div>
+        {% endfor %}
+
+    </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>
