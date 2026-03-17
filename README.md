@@ -41,5 +41,5 @@ A powerful Machine Learning & NLP tool that extracts and analyzes YouTube video 
 
 **1. Clone the mainframe repository:**
 ```bash
-git clone https://github.com/yourusername/yourrepo.git
+git clone https://github.com/sathya2k66ind-web/Youtube-comments.git
 cd yourrepo
