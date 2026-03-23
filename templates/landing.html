@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Y2K Analyzer — Boot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --hot-pink: #ff007f;
+            --cyan: #00f3ff;
+            --lime: #39ff14;
+            --bg-dark: #050510;
+        }
+ 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+        body {
+            background: var(--bg-dark);
+            color: var(--cyan);
+            font-family: 'VT323', monospace;
+            overflow: hidden;
+            height: 100vh;
+            cursor: crosshair;
+        }
+ 
+        /* CRT scanlines */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%),
+                        linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+            background-size: 100% 2px, 3px 100%;
+            z-index: 200;
+            pointer-events: none;
+        }
+ 
+        /* CRT flicker */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: rgba(0,243,255,0.02);
+            z-index: 200;
+            pointer-events: none;
+            animation: flicker 0.15s infinite;
+        }
+ 
+        @keyframes flicker {
+            0%   { opacity: 0.02; }
+            50%  { opacity: 0.06; }
+            100% { opacity: 0.02; }
+        }
+ 
+        /* 3D Grid */
+        .cyber-grid {
+            position: fixed;
+            bottom: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background-image:
+                linear-gradient(transparent 65%, var(--hot-pink) 66%, transparent 67%),
+                linear-gradient(90deg, transparent 65%, var(--hot-pink) 66%, transparent 67%);
+            background-size: 50px 50px;
+            transform: perspective(600px) rotateX(60deg);
+            animation: gridMove 2s linear infinite;
+            z-index: 0;
+            opacity: 0.35;
+        }
+ 
+        @keyframes gridMove {
+            0%   { transform: perspective(600px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(600px) rotateX(60deg) translateY(50px); }
+        }
+ 
+        /* Marquee */
+        .cyber-marquee {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: repeating-linear-gradient(45deg,#000,#000 10px,#1a1a1a 10px,#1a1a1a 20px);
+            color: var(--lime);
+            font-size: 18px;
+            padding: 5px;
+            border-bottom: 3px double var(--lime);
+            text-shadow: 0 0 5px var(--lime);
+            text-transform: uppercase;
+            z-index: 100;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+ 
+        .marquee-inner {
+            display: inline-block;
+            animation: marqueeScroll 18s linear infinite;
+        }
+ 
+        @keyframes marqueeScroll {
+            0%   { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+ 
+        /* Main container */
+        .landing-wrap {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 36px;
+        }
+ 
+        /* OS Window */
+        .os-window {
+            background: #c0c0c0;
+            border: 4px outset #ffffff;
+            padding: 2px;
+            box-shadow: 10px 10px 0 rgba(0,0,0,0.8), 0 0 40px var(--cyan);
+            width: min(680px, 94vw);
+            animation: bootUp 0.8s ease-out forwards;
+        }
+ 
+        @keyframes bootUp {
+            0%   { transform: scale(0.88) translateY(40px); opacity: 0; filter: brightness(2); }
+            100% { transform: scale(1) translateY(0);      opacity: 1; filter: brightness(1); }
+        }
+ 
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            padding: 5px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            color: white;
+            border: 2px inset #ffffff;
+        }
+ 
+        .window-controls span {
+            display: inline-block;
+            width: 16px; height: 16px;
+            background: #c0c0c0;
+            border: 2px outset #fff;
+            color: black;
+            text-align: center;
+            line-height: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+ 
+        .os-content {
+            background: #000;
+            border: 3px inset #ffffff;
+            padding: 32px 28px 28px;
+            position: relative;
+        }
+ 
+        /* Spinning star */
+        .y2k-star {
+            position: absolute;
+            top: 16px; right: 20px;
+            font-size: 36px;
+            color: var(--cyan);
+            animation: spin 4s linear infinite;
+            text-shadow: 0 0 15px var(--cyan);
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+ 
+        /* Chrome title */
+        h1.chrome-text {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: clamp(26px, 5vw, 42px);
+            text-align: center;
+            text-transform: uppercase;
+            background: linear-gradient(to bottom, #fff 0%, #b0b0b0 40%, #000 50%, #5e5e5e 60%, #fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 1px #fff;
+            filter: drop-shadow(3px 3px 0 var(--hot-pink)) drop-shadow(-2px -2px 0 var(--cyan));
+            letter-spacing: 2px;
+            margin: 0 0 6px;
+        }
+ 
+        .subtitle {
+            font-family: 'VT323', monospace;
+            font-size: 20px;
+            color: var(--lime);
+            text-align: center;
+            text-shadow: 0 0 6px var(--lime);
+            margin-bottom: 28px;
+            letter-spacing: 1px;
+        }
+ 
+        /* Boot terminal */
+        .terminal {
+            background: #000;
+            border: 2px solid var(--lime);
+            padding: 16px;
+            margin-bottom: 24px;
+            box-shadow: inset 0 0 10px rgba(57,255,20,0.15);
+            min-height: 140px;
+            font-size: 16px;
+        }
+ 
+        .terminal-line {
+            color: var(--lime);
+            text-shadow: 0 0 4px var(--lime);
+            margin-bottom: 4px;
+            opacity: 0;
+            animation: lineIn 0.1s ease forwards;
+        }
+ 
+        .terminal-line.cyan  { color: var(--cyan); text-shadow: 0 0 4px var(--cyan); }
+        .terminal-line.pink  { color: var(--hot-pink); text-shadow: 0 0 4px var(--hot-pink); }
+        .terminal-line.white { color: #fff; }
+ 
+        @keyframes lineIn {
+            to { opacity: 1; }
+        }
+ 
+        /* Progress bar */
+        .progress-wrap {
+            margin-bottom: 24px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+ 
+        .progress-label {
+            font-size: 16px;
+            color: var(--cyan);
+            margin-bottom: 6px;
+            text-shadow: 0 0 4px var(--cyan);
+        }
+ 
+        .progress-track {
+            height: 18px;
+            background: #001100;
+            border: 2px solid var(--lime);
+            box-shadow: inset 0 0 8px rgba(57,255,20,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+ 
+        .progress-fill {
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--lime) 0px,
+                var(--lime) 12px,
+                #003300 12px,
+                #003300 16px
+            );
+            width: 0%;
+            transition: width 0.05s linear;
+            box-shadow: 0 0 10px var(--lime);
+        }
+ 
+        .progress-pct {
+            position: absolute;
+            right: 8px;
+            top: 0; bottom: 0;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: var(--lime);
+            font-family: 'Press Start 2P', monospace;
+        }
+ 
+        /* Feature pills */
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 26px;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+ 
+        .feat-pill {
+            background: rgba(0,243,255,0.07);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+            font-family: 'VT323', monospace;
+            font-size: 16px;
+            padding: 4px 14px;
+            text-shadow: 0 0 4px var(--cyan);
+            letter-spacing: 1px;
+        }
+ 
+        /* Launch button */
+        .launch-wrap {
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+ 
+        .launch-btn {
+            display: inline-block;
+            padding: 14px 48px;
+            background: var(--hot-pink);
+            border: 4px outset #ff66b2;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            cursor: pointer;
+            text-transform: uppercase;
+            text-decoration: none;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px var(--hot-pink), 0 0 40px rgba(255,0,127,0.3);
+            transition: all 0.1s;
+        }
+ 
+        .launch-btn:hover {
+            background: var(--cyan);
+            border-color: var(--cyan);
+            color: #000;
+            box-shadow: 0 0 30px var(--cyan), 0 0 60px rgba(0,243,255,0.4);
+            animation: glitch 0.3s infinite;
+        }
+ 
+        .launch-btn:active {
+            border: 4px inset #ff66b2;
+            transform: translateY(2px);
+        }
+ 
+        @keyframes glitch {
+            0%   { transform: translate(0); }
+            20%  { transform: translate(-2px, 2px); }
+            40%  { transform: translate(-2px,-2px); }
+            60%  { transform: translate(2px, 2px); }
+            80%  { transform: translate(2px,-2px); }
+            100% { transform: translate(0); }
+        }
+ 
+        .launch-hint {
+            font-size: 14px;
+            color: #444;
+            margin-top: 10px;
+            font-family: 'VT323', monospace;
+        }
+    </style>
+</head>
+<body>
+ 
+<div class="cyber-grid"></div>
+ 
+<div class="cyber-marquee">
+    <span class="marquee-inner">
+        /// SYSTEM ONLINE /// Y2K SENTIMENT ANALYZER v2.0 /// INITIALIZING NEURAL NETWORK /// AWAITING INPUT /// NO CARRIER /// READY ///&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </span>
+</div>
+ 
+<div class="landing-wrap">
+    <div class="os-window">
+        <div class="title-bar">
+            <span>C:\Y2K_TOOLS\boot.exe</span>
+            <div class="window-controls">
+                <span>_</span><span>□</span><span>X</span>
+            </div>
+        </div>
+ 
+        <div class="os-content">
+            <div class="y2k-star">✽</div>
+ 
+            <h1 class="chrome-text">Y2K Analyzer</h1>
+            <p class="subtitle">>> YouTube Comment Sentiment Engine v2.0</p>
+ 
+            <!-- Boot terminal -->
+            <div class="terminal" id="terminal"></div>
+ 
+            <!-- Progress bar -->
+            <div class="progress-wrap" id="progressWrap">
+                <div class="progress-label">> LOADING NEURAL MODULES...</div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                    <span class="progress-pct" id="progressPct">0%</span>
+                </div>
+            </div>
+ 
+            <!-- Features -->
+            <div class="features" id="features">
+                <div class="feat-pill">[ API_EXTRACTION ]</div>
+                <div class="feat-pill">[ SENTIMENT_AI ]</div>
+                <div class="feat-pill">[ TOXICITY_RADAR ]</div>
+                <div class="feat-pill">[ DATA_VIZ ]</div>
+                <div class="feat-pill">[ CRT_UI ]</div>
+            </div>
+ 
+            <!-- Launch -->
+            <div class="launch-wrap" id="launchWrap">
+                <a href="/" class="launch-btn">BOOT SYSTEM</a>
+                <p class="launch-hint">>> CLICK TO INITIALIZE ANALYZER.EXE</p>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<script>
+    const terminal = document.getElementById('terminal');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressFill = document.getElementById('progressFill');
+    const progressPct  = document.getElementById('progressPct');
+    const features     = document.getElementById('features');
+    const launchWrap   = document.getElementById('launchWrap');
+ 
+    const bootLines = [
+        { text: 'C:\\Y2K_TOOLS> boot.exe --init',         cls: 'white', delay: 200  },
+        { text: 'BIOS v2.0K ... OK',                       cls: '',      delay: 600  },
+        { text: 'Loading sentiment_engine.dll ... OK',     cls: '',      delay: 1000 },
+        { text: 'Loading toxicity_radar.dll ... OK',       cls: '',      delay: 1400 },
+        { text: 'Connecting to YouTube API ... LINKED',    cls: 'cyan',  delay: 1800 },
+        { text: 'Initializing NLP modules ... DONE',       cls: 'cyan',  delay: 2200 },
+        { text: '> ALL SYSTEMS NOMINAL',                   cls: 'pink',  delay: 2700 },
+    ];
+ 
+    bootLines.forEach(({ text, cls, delay }) => {
+        setTimeout(() => {
+            const line = document.createElement('div');
+            line.className = `terminal-line ${cls}`;
+            line.textContent = text;
+            terminal.appendChild(line);
+        }, delay);
+    });
+ 
+    // Progress bar
+    setTimeout(() => {
+        progressWrap.style.opacity = '1';
+        let pct = 0;
+        const interval = setInterval(() => {
+            pct += 2;
+            progressFill.style.width = pct + '%';
+            progressPct.textContent  = pct + '%';
+            if (pct >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    features.style.opacity   = '1';
+                    launchWrap.style.opacity = '1';
+                }, 300);
+            }
+        }, 30);
+    }, 3000);
+</script>
+</body>
+</html>
+ 
