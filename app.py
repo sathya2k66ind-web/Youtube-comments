@@ -5,12 +5,12 @@ from sentiment import predict_sentiment, is_toxic
 app = Flask(__name__)
  
 # ── Landing page ──────────────────────────────────────
-@app.route("/landing")
+@app.route("/")
 def landing():
     return render_template("landing.html")
  
 # ── Main analyzer ─────────────────────────────────────
-@app.route("/", methods=["GET", "POST"])
+@app.route("/analyzer", methods=["GET", "POST"])
 def index():
     results       = None
     comments_data = []
