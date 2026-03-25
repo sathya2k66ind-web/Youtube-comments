@@ -10,11 +10,12 @@
             --hot-pink: #ff007f;
             --cyan: #00f3ff;
             --lime: #39ff14;
+            --amber: #ffb800;
             --bg-dark: #050510;
         }
- 
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
- 
+
         body {
             background: var(--bg-dark);
             color: var(--cyan);
@@ -23,36 +24,36 @@
             height: 100vh;
             cursor: crosshair;
         }
- 
+
         /* CRT scanlines */
         body::before {
             content: "";
             position: fixed;
             inset: 0;
-            background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%),
-                        linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+            background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.3) 50%),
+                        linear-gradient(90deg, rgba(255,0,0,0.04), rgba(0,255,0,0.02), rgba(0,0,255,0.04));
             background-size: 100% 2px, 3px 100%;
-            z-index: 200;
+            z-index: 300;
             pointer-events: none;
         }
- 
+
         /* CRT flicker */
         body::after {
             content: "";
             position: fixed;
             inset: 0;
-            background: rgba(0,243,255,0.02);
-            z-index: 200;
+            background: rgba(0,243,255,0.015);
+            z-index: 300;
             pointer-events: none;
-            animation: flicker 0.15s infinite;
+            animation: flicker 0.12s infinite;
         }
- 
+
         @keyframes flicker {
-            0%   { opacity: 0.02; }
-            50%  { opacity: 0.06; }
-            100% { opacity: 0.02; }
+            0%   { opacity: 0.015; }
+            50%  { opacity: 0.055; }
+            100% { opacity: 0.015; }
         }
- 
+
         /* 3D Grid */
         .cyber-grid {
             position: fixed;
@@ -67,41 +68,122 @@
             transform: perspective(600px) rotateX(60deg);
             animation: gridMove 2s linear infinite;
             z-index: 0;
-            opacity: 0.35;
+            opacity: 0.3;
         }
- 
+
         @keyframes gridMove {
             0%   { transform: perspective(600px) rotateX(60deg) translateY(0); }
             100% { transform: perspective(600px) rotateX(60deg) translateY(50px); }
         }
- 
+
         /* Marquee */
         .cyber-marquee {
             position: fixed;
             top: 0; left: 0; right: 0;
-            background: repeating-linear-gradient(45deg,#000,#000 10px,#1a1a1a 10px,#1a1a1a 20px);
+            background: repeating-linear-gradient(45deg,#000,#000 10px,#0a0a0a 10px,#0a0a0a 20px);
             color: var(--lime);
-            font-size: 18px;
-            padding: 5px;
-            border-bottom: 3px double var(--lime);
-            text-shadow: 0 0 5px var(--lime);
+            font-size: 16px;
+            padding: 4px 0;
+            border-bottom: 2px double var(--lime);
+            text-shadow: 0 0 8px var(--lime);
             text-transform: uppercase;
-            z-index: 100;
+            z-index: 200;
             white-space: nowrap;
             overflow: hidden;
         }
- 
+
         .marquee-inner {
             display: inline-block;
-            animation: marqueeScroll 18s linear infinite;
+            animation: marqueeScroll 20s linear infinite;
         }
- 
+
         @keyframes marqueeScroll {
             0%   { transform: translateX(100vw); }
             100% { transform: translateX(-100%); }
         }
- 
-        /* Main container */
+
+        /* ── FLOATING CORNER DECORATIONS ── */
+        .corner-text {
+            position: fixed;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            line-height: 1.8;
+            z-index: 50;
+            opacity: 0.35;
+        }
+
+        .corner-tl { top: 36px; left: 12px; color: var(--lime); text-shadow: 0 0 6px var(--lime); }
+        .corner-tr { top: 36px; right: 12px; color: var(--hot-pink); text-shadow: 0 0 6px var(--hot-pink); text-align: right; }
+        .corner-bl { bottom: 12px; left: 12px; color: var(--cyan); text-shadow: 0 0 6px var(--cyan); }
+        .corner-br { bottom: 12px; right: 12px; color: var(--amber); text-shadow: 0 0 6px var(--amber); text-align: right; }
+
+        /* Animated blinking cursor on corner stats */
+        .blink { animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* ── HUD SIDE PANELS ── */
+        .hud-panel {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 130px;
+            z-index: 50;
+            font-family: 'VT323', monospace;
+            font-size: 13px;
+            opacity: 0;
+            transition: opacity 0.8s;
+        }
+
+        .hud-left  { left: 8px; }
+        .hud-right { right: 8px; text-align: right; }
+
+        .hud-panel.visible { opacity: 1; }
+
+        .hud-section {
+            border: 1px solid rgba(0,243,255,0.25);
+            background: rgba(0,243,255,0.03);
+            padding: 8px 10px;
+            margin-bottom: 8px;
+        }
+
+        .hud-label {
+            color: var(--cyan);
+            text-shadow: 0 0 4px var(--cyan);
+            font-size: 11px;
+            font-family: 'Press Start 2P', monospace;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .hud-bar-wrap {
+            height: 6px;
+            background: #001100;
+            border: 1px solid var(--lime);
+            margin: 3px 0 6px;
+            overflow: hidden;
+        }
+
+        .hud-bar {
+            height: 100%;
+            background: var(--lime);
+            box-shadow: 0 0 6px var(--lime);
+            transition: width 0.3s;
+        }
+
+        .hud-bar.pink { background: var(--hot-pink); box-shadow: 0 0 6px var(--hot-pink); }
+        .hud-bar.amber { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+
+        .hud-val {
+            color: var(--lime);
+            text-shadow: 0 0 4px var(--lime);
+            font-size: 14px;
+        }
+
+        .hud-val.pink  { color: var(--hot-pink); text-shadow: 0 0 4px var(--hot-pink); }
+        .hud-val.amber { color: var(--amber); text-shadow: 0 0 4px var(--amber); }
+        .hud-val.cyan  { color: var(--cyan); text-shadow: 0 0 4px var(--cyan); }
+
+        /* ── MAIN OS WINDOW ── */
         .landing-wrap {
             position: relative;
             z-index: 10;
@@ -109,36 +191,41 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding-top: 36px;
+            padding-top: 32px;
         }
- 
-        /* OS Window */
+
         .os-window {
             background: #c0c0c0;
             border: 4px outset #ffffff;
             padding: 2px;
-            box-shadow: 10px 10px 0 rgba(0,0,0,0.8), 0 0 40px var(--cyan);
-            width: min(680px, 94vw);
-            animation: bootUp 0.8s ease-out forwards;
+            box-shadow: 12px 12px 0 rgba(0,0,0,0.9),
+                        0 0 40px var(--cyan),
+                        0 0 80px rgba(0,243,255,0.15);
+            width: min(700px, 94vw);
+            animation: bootUp 0.9s cubic-bezier(0.16,1,0.3,1) forwards;
         }
- 
+
         @keyframes bootUp {
-            0%   { transform: scale(0.88) translateY(40px); opacity: 0; filter: brightness(2); }
-            100% { transform: scale(1) translateY(0);      opacity: 1; filter: brightness(1); }
+            0%   { transform: scale(0.85) translateY(50px); opacity: 0; filter: brightness(3) saturate(0); }
+            60%  { filter: brightness(1.2) saturate(1.5); }
+            100% { transform: scale(1) translateY(0); opacity: 1; filter: brightness(1) saturate(1); }
         }
- 
+
         .title-bar {
-            background: linear-gradient(90deg, #000080, #1084d0);
+            background: linear-gradient(90deg, #000080, #0050c8, #1084d0);
             padding: 5px 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-family: 'Press Start 2P', monospace;
-            font-size: 10px;
+            font-size: 9px;
             color: white;
             border: 2px inset #ffffff;
+            text-shadow: 1px 1px 0 #000;
         }
- 
+
+        .window-controls { display: flex; gap: 3px; }
+
         .window-controls span {
             display: inline-block;
             width: 16px; height: 16px;
@@ -149,161 +236,295 @@
             line-height: 16px;
             font-weight: bold;
             cursor: pointer;
+            font-size: 10px;
         }
- 
+        .window-controls span:active { border: 2px inset #fff; }
+
         .os-content {
-            background: #000;
+            background: #000005;
             border: 3px inset #ffffff;
-            padding: 32px 28px 28px;
+            padding: 28px 28px 24px;
             position: relative;
+            overflow: hidden;
         }
- 
+
+        /* Scan line sweep inside window */
+        .os-content::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0; right: 0;
+            height: 40%;
+            background: linear-gradient(transparent, rgba(0,243,255,0.03), transparent);
+            animation: sweep 4s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes sweep {
+            0%   { top: -40%; }
+            100% { top: 100%; }
+        }
+
         /* Spinning star */
         .y2k-star {
             position: absolute;
-            top: 16px; right: 20px;
-            font-size: 36px;
+            top: 14px; right: 18px;
+            font-size: 32px;
             color: var(--cyan);
-            animation: spin 4s linear infinite;
-            text-shadow: 0 0 15px var(--cyan);
+            animation: spin 3s linear infinite;
+            text-shadow: 0 0 20px var(--cyan), 0 0 40px rgba(0,243,255,0.4);
+        }
+        /* Second decorative star */
+        .y2k-star-2 {
+            position: absolute;
+            top: 14px; left: 18px;
+            font-size: 20px;
+            color: var(--hot-pink);
+            animation: spin 5s linear infinite reverse;
+            text-shadow: 0 0 15px var(--hot-pink);
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
- 
+
         /* Chrome title */
         h1.chrome-text {
             font-family: 'Orbitron', sans-serif;
             font-weight: 800;
-            font-size: clamp(26px, 5vw, 42px);
+            font-size: clamp(28px, 5vw, 44px);
             text-align: center;
             text-transform: uppercase;
-            background: linear-gradient(to bottom, #fff 0%, #b0b0b0 40%, #000 50%, #5e5e5e 60%, #fff 100%);
+            background: linear-gradient(to bottom,
+                #ffffff 0%, #d0d0d0 30%,
+                #888 45%, #000 50%,
+                #666 60%, #fff 80%, #ccc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            -webkit-text-stroke: 1px #fff;
-            filter: drop-shadow(3px 3px 0 var(--hot-pink)) drop-shadow(-2px -2px 0 var(--cyan));
-            letter-spacing: 2px;
-            margin: 0 0 6px;
+            -webkit-text-stroke: 1px rgba(255,255,255,0.6);
+            filter: drop-shadow(4px 4px 0 var(--hot-pink))
+                    drop-shadow(-3px -3px 0 var(--cyan))
+                    drop-shadow(0 0 20px rgba(0,243,255,0.4));
+            letter-spacing: 3px;
+            margin: 4px 0 4px;
+            animation: titleGlitch 8s infinite;
         }
- 
+
+        @keyframes titleGlitch {
+            0%, 92%, 100% { filter: drop-shadow(4px 4px 0 var(--hot-pink)) drop-shadow(-3px -3px 0 var(--cyan)) drop-shadow(0 0 20px rgba(0,243,255,0.4)); transform: translate(0); }
+            93%  { filter: drop-shadow(6px 0 0 var(--hot-pink)) drop-shadow(-6px 0 0 var(--cyan)); transform: translate(-3px, 0); }
+            94%  { filter: drop-shadow(-6px 0 0 var(--hot-pink)) drop-shadow(6px 0 0 var(--lime)); transform: translate(3px, 0); }
+            95%  { filter: drop-shadow(4px 4px 0 var(--hot-pink)) drop-shadow(-3px -3px 0 var(--cyan)); transform: translate(0); }
+        }
+
         .subtitle {
             font-family: 'VT323', monospace;
-            font-size: 20px;
+            font-size: 19px;
             color: var(--lime);
             text-align: center;
-            text-shadow: 0 0 6px var(--lime);
-            margin-bottom: 28px;
+            text-shadow: 0 0 8px var(--lime);
+            margin-bottom: 20px;
             letter-spacing: 1px;
         }
- 
+
+        /* Version badge row */
+        .version-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .v-badge {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            padding: 3px 8px;
+            border: 1px solid;
+            text-transform: uppercase;
+        }
+
+        .v-badge.cyan  { color: var(--cyan);     border-color: var(--cyan);     background: rgba(0,243,255,0.05); text-shadow: 0 0 4px var(--cyan); }
+        .v-badge.pink  { color: var(--hot-pink); border-color: var(--hot-pink); background: rgba(255,0,127,0.05); text-shadow: 0 0 4px var(--hot-pink); }
+        .v-badge.lime  { color: var(--lime);     border-color: var(--lime);     background: rgba(57,255,20,0.05); text-shadow: 0 0 4px var(--lime); }
+        .v-badge.amber { color: var(--amber);    border-color: var(--amber);    background: rgba(255,184,0,0.05); text-shadow: 0 0 4px var(--amber); }
+
         /* Boot terminal */
         .terminal {
             background: #000;
-            border: 2px solid var(--lime);
-            padding: 16px;
-            margin-bottom: 24px;
-            box-shadow: inset 0 0 10px rgba(57,255,20,0.15);
-            min-height: 140px;
-            font-size: 16px;
+            border: 1px solid var(--lime);
+            box-shadow: inset 0 0 15px rgba(57,255,20,0.1), 0 0 10px rgba(57,255,20,0.1);
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            min-height: 130px;
+            font-size: 15px;
+            position: relative;
         }
- 
+
+        /* Terminal corner decorations */
+        .terminal::before {
+            content: '┌─────────────────────────────────────────────────┐';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            color: rgba(57,255,20,0.2);
+            font-size: 12px;
+            overflow: hidden;
+        }
+
         .terminal-line {
             color: var(--lime);
-            text-shadow: 0 0 4px var(--lime);
-            margin-bottom: 4px;
+            text-shadow: 0 0 5px var(--lime);
+            margin-bottom: 3px;
             opacity: 0;
-            animation: lineIn 0.1s ease forwards;
+            animation: lineIn 0.05s ease forwards;
+            white-space: pre;
         }
- 
-        .terminal-line.cyan  { color: var(--cyan); text-shadow: 0 0 4px var(--cyan); }
-        .terminal-line.pink  { color: var(--hot-pink); text-shadow: 0 0 4px var(--hot-pink); }
-        .terminal-line.white { color: #fff; }
- 
-        @keyframes lineIn {
-            to { opacity: 1; }
+
+        .terminal-line.cyan  { color: var(--cyan);     text-shadow: 0 0 5px var(--cyan); }
+        .terminal-line.pink  { color: var(--hot-pink); text-shadow: 0 0 5px var(--hot-pink); }
+        .terminal-line.amber { color: var(--amber);    text-shadow: 0 0 5px var(--amber); }
+        .terminal-line.white { color: #e0e0e0; }
+        .terminal-line.dim   { color: #336633; text-shadow: none; }
+
+        @keyframes lineIn { to { opacity: 1; } }
+
+        /* Typing cursor */
+        .cursor {
+            display: inline-block;
+            width: 9px; height: 16px;
+            background: var(--lime);
+            box-shadow: 0 0 8px var(--lime);
+            animation: blink 0.6s step-end infinite;
+            vertical-align: bottom;
+            margin-left: 2px;
         }
- 
+
         /* Progress bar */
         .progress-wrap {
-            margin-bottom: 24px;
+            margin-bottom: 16px;
             opacity: 0;
             transition: opacity 0.3s;
         }
- 
-        .progress-label {
-            font-size: 16px;
-            color: var(--cyan);
-            margin-bottom: 6px;
-            text-shadow: 0 0 4px var(--cyan);
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
         }
- 
+
+        .progress-label {
+            font-size: 15px;
+            color: var(--cyan);
+            text-shadow: 0 0 5px var(--cyan);
+        }
+
         .progress-track {
-            height: 18px;
-            background: #001100;
-            border: 2px solid var(--lime);
-            box-shadow: inset 0 0 8px rgba(57,255,20,0.2);
+            height: 20px;
+            background: #000d00;
+            border: 1px solid var(--lime);
+            box-shadow: inset 0 0 10px rgba(57,255,20,0.15), 0 0 8px rgba(57,255,20,0.1);
             position: relative;
             overflow: hidden;
         }
- 
+
         .progress-fill {
             height: 100%;
             background: repeating-linear-gradient(
                 90deg,
-                var(--lime) 0px,
-                var(--lime) 12px,
-                #003300 12px,
-                #003300 16px
+                var(--lime) 0px, var(--lime) 10px,
+                #004000 10px, #004000 14px
             );
             width: 0%;
-            transition: width 0.05s linear;
-            box-shadow: 0 0 10px var(--lime);
+            transition: width 0.04s linear;
+            box-shadow: 0 0 12px var(--lime);
         }
- 
+
+        /* Scanline on progress */
+        .progress-track::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent, transparent 2px,
+                rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px
+            );
+            pointer-events: none;
+        }
+
         .progress-pct {
             position: absolute;
-            right: 8px;
-            top: 0; bottom: 0;
+            right: 8px; top: 0; bottom: 0;
             display: flex;
             align-items: center;
-            font-size: 14px;
+            font-size: 11px;
             color: var(--lime);
             font-family: 'Press Start 2P', monospace;
+            text-shadow: 0 0 6px var(--lime);
         }
- 
+
+        /* System stats row */
+        .sys-stats {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 16px;
+            opacity: 0;
+            transition: opacity 0.4s;
+            font-size: 13px;
+            font-family: 'Press Start 2P', monospace;
+        }
+
+        .sys-stat {
+            color: #336633;
+            text-align: center;
+        }
+
+        .sys-stat span {
+            display: block;
+            font-size: 15px;
+            color: var(--lime);
+            text-shadow: 0 0 6px var(--lime);
+            font-family: 'VT323', monospace;
+        }
+
         /* Feature pills */
         .features {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 7px;
             justify-content: center;
-            margin-bottom: 26px;
+            margin-bottom: 20px;
             opacity: 0;
             transition: opacity 0.4s;
         }
- 
+
         .feat-pill {
-            background: rgba(0,243,255,0.07);
-            border: 1px solid var(--cyan);
+            background: rgba(0,243,255,0.05);
+            border: 1px solid rgba(0,243,255,0.4);
             color: var(--cyan);
             font-family: 'VT323', monospace;
-            font-size: 16px;
-            padding: 4px 14px;
-            text-shadow: 0 0 4px var(--cyan);
+            font-size: 15px;
+            padding: 3px 12px;
+            text-shadow: 0 0 5px var(--cyan);
             letter-spacing: 1px;
+            transition: all 0.2s;
         }
- 
+
+        .feat-pill:hover {
+            background: rgba(0,243,255,0.15);
+            box-shadow: 0 0 10px rgba(0,243,255,0.3);
+        }
+
         /* Launch button */
         .launch-wrap {
             text-align: center;
             opacity: 0;
             transition: opacity 0.4s;
         }
- 
+
         .launch-btn {
             display: inline-block;
-            padding: 14px 48px;
+            padding: 15px 56px;
             background: var(--hot-pink);
-            border: 4px outset #ff66b2;
+            border: 3px outset #ff66b2;
             color: white;
             font-family: 'Orbitron', sans-serif;
             font-weight: 800;
@@ -311,88 +532,221 @@
             cursor: pointer;
             text-transform: uppercase;
             text-decoration: none;
-            letter-spacing: 2px;
-            box-shadow: 0 0 20px var(--hot-pink), 0 0 40px rgba(255,0,127,0.3);
+            letter-spacing: 3px;
+            box-shadow: 0 0 25px var(--hot-pink),
+                        0 0 50px rgba(255,0,127,0.3),
+                        inset 0 1px 0 rgba(255,255,255,0.2);
             transition: all 0.1s;
+            position: relative;
+            animation: btnPulse 2s ease-in-out infinite;
         }
- 
+
+        @keyframes btnPulse {
+            0%, 100% { box-shadow: 0 0 25px var(--hot-pink), 0 0 50px rgba(255,0,127,0.3); }
+            50%       { box-shadow: 0 0 40px var(--hot-pink), 0 0 80px rgba(255,0,127,0.5); }
+        }
+
         .launch-btn:hover {
             background: var(--cyan);
             border-color: var(--cyan);
             color: #000;
-            box-shadow: 0 0 30px var(--cyan), 0 0 60px rgba(0,243,255,0.4);
-            animation: glitch 0.3s infinite;
+            animation: btnGlitch 0.25s infinite;
+            box-shadow: 0 0 35px var(--cyan), 0 0 70px rgba(0,243,255,0.5);
         }
- 
+
         .launch-btn:active {
-            border: 4px inset #ff66b2;
+            border: 3px inset #ff66b2;
             transform: translateY(2px);
         }
- 
-        @keyframes glitch {
-            0%   { transform: translate(0); }
-            20%  { transform: translate(-2px, 2px); }
-            40%  { transform: translate(-2px,-2px); }
-            60%  { transform: translate(2px, 2px); }
-            80%  { transform: translate(2px,-2px); }
+
+        @keyframes btnGlitch {
+            0%   { transform: translate(0); clip-path: none; }
+            20%  { transform: translate(-2px, 1px); }
+            40%  { transform: translate(2px, -1px); clip-path: inset(10% 0 80% 0); }
+            60%  { transform: translate(-1px, 2px); clip-path: none; }
+            80%  { transform: translate(1px, -2px); }
             100% { transform: translate(0); }
         }
- 
+
         .launch-hint {
-            font-size: 14px;
-            color: #444;
-            margin-top: 10px;
+            font-size: 13px;
+            color: #2a2a2a;
+            margin-top: 8px;
             font-family: 'VT323', monospace;
+            text-shadow: none;
+            letter-spacing: 1px;
+        }
+
+        /* RGB glitch overlay strips */
+        .glitch-strip {
+            position: fixed;
+            left: 0; right: 0;
+            height: 2px;
+            background: var(--cyan);
+            opacity: 0;
+            z-index: 250;
+            pointer-events: none;
+            animation: stripFlash 6s infinite;
+        }
+
+        .glitch-strip:nth-child(1) { top: 30%; animation-delay: 0s;    background: var(--hot-pink); }
+        .glitch-strip:nth-child(2) { top: 55%; animation-delay: 2.1s;  background: var(--cyan); }
+        .glitch-strip:nth-child(3) { top: 72%; animation-delay: 4.3s;  background: var(--lime); height: 1px; }
+
+        @keyframes stripFlash {
+            0%, 96%, 100% { opacity: 0; transform: scaleX(1); }
+            97%  { opacity: 0.7; transform: scaleX(0.4) translateX(30%); }
+            98%  { opacity: 0.4; transform: scaleX(1); }
+            99%  { opacity: 0; }
         }
     </style>
 </head>
 <body>
- 
+
+<!-- Background -->
 <div class="cyber-grid"></div>
- 
+<div class="glitch-strip"></div>
+<div class="glitch-strip"></div>
+<div class="glitch-strip"></div>
+
+<!-- Top marquee -->
 <div class="cyber-marquee">
     <span class="marquee-inner">
-        /// SYSTEM ONLINE /// Y2K SENTIMENT ANALYZER v2.0 /// INITIALIZING NEURAL NETWORK /// AWAITING INPUT /// NO CARRIER /// READY ///&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        /// SYSTEM ONLINE /// Y2K SENTIMENT ANALYZER v2.0 /// INITIALIZING NEURAL NETWORK /// AWAITING INPUT /// CPU: 94% /// RAM: 640K /// NO CARRIER /// READY /// UPLINK ESTABLISHED ///&nbsp;&nbsp;&nbsp;&nbsp;
     </span>
 </div>
- 
+
+<!-- Corner decorations -->
+<div class="corner-text corner-tl">
+    SYS_VER: 2.0K<br>
+    BUILD: 990101<br>
+    STATUS: <span style="color:#39ff14">ONLINE</span><br>
+    NODE: Y2K_01<br>
+    <span class="blink">_</span>
+</div>
+
+<div class="corner-text corner-tr">
+    UPLINK: ACTIVE<br>
+    LATENCY: 12MS<br>
+    PKT_LOSS: 0%<br>
+    SIGNAL: ████▒<br>
+    <span class="blink" style="color:#ff007f">▮</span>
+</div>
+
+<div class="corner-text corner-bl">
+    CPU_0: <span id="cpu0">--</span>%<br>
+    CPU_1: <span id="cpu1">--</span>%<br>
+    MEM: 640K OK<br>
+    DISK: C:\ OK
+</div>
+
+<div class="corner-text corner-br">
+    NET: TX ████<br>
+    RX: ███▒▒<br>
+    IP: 192.168.Y2K<br>
+    PORT: 1337
+</div>
+
+<!-- HUD left panel -->
+<div class="hud-panel hud-left" id="hudLeft">
+    <div class="hud-section">
+        <span class="hud-label">CPU LOAD</span>
+        <div class="hud-bar-wrap"><div class="hud-bar" id="cpuBar" style="width:0%"></div></div>
+        <span class="hud-val" id="cpuVal">0%</span>
+    </div>
+    <div class="hud-section">
+        <span class="hud-label">MEMORY</span>
+        <div class="hud-bar-wrap"><div class="hud-bar pink" id="memBar" style="width:0%"></div></div>
+        <span class="hud-val pink" id="memVal">0K</span>
+    </div>
+    <div class="hud-section">
+        <span class="hud-label">NEURAL</span>
+        <div class="hud-bar-wrap"><div class="hud-bar amber" id="neuBar" style="width:0%"></div></div>
+        <span class="hud-val amber" id="neuVal">IDLE</span>
+    </div>
+</div>
+
+<!-- HUD right panel -->
+<div class="hud-panel hud-right" id="hudRight">
+    <div class="hud-section">
+        <span class="hud-label">API LINK</span>
+        <span class="hud-val cyan" id="apiVal">INIT...</span>
+    </div>
+    <div class="hud-section">
+        <span class="hud-label">NLP CORES</span>
+        <span class="hud-val" id="nlpVal">0 / 8</span>
+    </div>
+    <div class="hud-section">
+        <span class="hud-label">SENTIMENT</span>
+        <span class="hud-val pink" id="sentVal">OFFLINE</span>
+    </div>
+    <div class="hud-section">
+        <span class="hud-label">TOXICITY</span>
+        <span class="hud-val amber" id="toxVal">OFFLINE</span>
+    </div>
+</div>
+
+<!-- Main window -->
 <div class="landing-wrap">
     <div class="os-window">
         <div class="title-bar">
-            <span>C:\Y2K_TOOLS\boot.exe</span>
+            <span>C:\Y2K_TOOLS\boot.exe — [INITIALIZING]</span>
             <div class="window-controls">
-                <span>_</span><span>□</span><span>X</span>
+                <span>_</span><span>□</span><span>✕</span>
             </div>
         </div>
- 
+
         <div class="os-content">
+            <div class="y2k-star-2">✦</div>
             <div class="y2k-star">✽</div>
- 
+
             <h1 class="chrome-text">Y2K Analyzer</h1>
             <p class="subtitle">>> YouTube Comment Sentiment Engine v2.0</p>
- 
+
+            <!-- Version badges -->
+            <div class="version-row">
+                <span class="v-badge cyan">NLP v3.1</span>
+                <span class="v-badge pink">BERT-HYBRID</span>
+                <span class="v-badge lime">API v2.0</span>
+                <span class="v-badge amber">CRT-UI</span>
+                <span class="v-badge cyan">TOXICITY RADAR</span>
+            </div>
+
             <!-- Boot terminal -->
-            <div class="terminal" id="terminal"></div>
- 
+            <div class="terminal" id="terminal">
+                <span class="cursor" id="cursor"></span>
+            </div>
+
             <!-- Progress bar -->
             <div class="progress-wrap" id="progressWrap">
-                <div class="progress-label">> LOADING NEURAL MODULES...</div>
+                <div class="progress-header">
+                    <span class="progress-label">> LOADING NEURAL MODULES...</span>
+                    <span class="progress-label" id="progressPct" style="font-family:'Press Start 2P';font-size:10px;">0%</span>
+                </div>
                 <div class="progress-track">
                     <div class="progress-fill" id="progressFill"></div>
-                    <span class="progress-pct" id="progressPct">0%</span>
                 </div>
             </div>
- 
+
+            <!-- System stats -->
+            <div class="sys-stats" id="sysStats">
+                <div class="sys-stat">RAM<span>640K OK</span></div>
+                <div class="sys-stat">CORES<span>8 ACTIVE</span></div>
+                <div class="sys-stat">LATENCY<span>12MS</span></div>
+                <div class="sys-stat">UPTIME<span id="uptime">00:00</span></div>
+            </div>
+
             <!-- Features -->
             <div class="features" id="features">
                 <div class="feat-pill">[ API_EXTRACTION ]</div>
                 <div class="feat-pill">[ SENTIMENT_AI ]</div>
                 <div class="feat-pill">[ TOXICITY_RADAR ]</div>
                 <div class="feat-pill">[ DATA_VIZ ]</div>
-                <div class="feat-pill">[ CRT_UI ]</div>
+                <div class="feat-pill">[ CRT_RENDER ]</div>
+                <div class="feat-pill">[ BERT_HYBRID ]</div>
             </div>
- 
-            <!-- Launch - UPDATED LINK -->
+
+            <!-- Launch -->
             <div class="launch-wrap" id="launchWrap">
                 <a href="/analyzer" class="launch-btn">BOOT SYSTEM</a>
                 <p class="launch-hint">>> CLICK TO INITIALIZE ANALYZER.EXE</p>
@@ -400,51 +754,103 @@
         </div>
     </div>
 </div>
- 
+
 <script>
-    const terminal = document.getElementById('terminal');
+    const terminal    = document.getElementById('terminal');
+    const cursor      = document.getElementById('cursor');
     const progressWrap = document.getElementById('progressWrap');
     const progressFill = document.getElementById('progressFill');
     const progressPct  = document.getElementById('progressPct');
     const features     = document.getElementById('features');
     const launchWrap   = document.getElementById('launchWrap');
- 
+    const sysStats     = document.getElementById('sysStats');
+
     const bootLines = [
-        { text: 'C:\\Y2K_TOOLS> boot.exe --init',         cls: 'white', delay: 200  },
-        { text: 'BIOS v2.0K ... OK',                       cls: '',      delay: 600  },
-        { text: 'Loading sentiment_engine.dll ... OK',     cls: '',      delay: 1000 },
-        { text: 'Loading toxicity_radar.dll ... OK',       cls: '',      delay: 1400 },
-        { text: 'Connecting to YouTube API ... LINKED',    cls: 'cyan',  delay: 1800 },
-        { text: 'Initializing NLP modules ... DONE',       cls: 'cyan',  delay: 2200 },
-        { text: '> ALL SYSTEMS NOMINAL',                   cls: 'pink',  delay: 2700 },
+        { text: 'C:\\Y2K_TOOLS> boot.exe --init --verbose',  cls: 'white', delay: 300  },
+        { text: 'BIOS v2.0K ... OK',                          cls: 'dim',   delay: 650  },
+        { text: 'POST memory check: 640K ... PASS',           cls: 'dim',   delay: 950  },
+        { text: 'Loading sentiment_engine.dll ........ OK',   cls: '',      delay: 1200 },
+        { text: 'Loading toxicity_radar.dll .......... OK',   cls: '',      delay: 1500 },
+        { text: 'Loading bert_hybrid.model ........... OK',   cls: '',      delay: 1800 },
+        { text: 'Connecting to YouTube Data API .... LINKED', cls: 'cyan',  delay: 2150 },
+        { text: 'Spawning NLP worker threads [8/8] ... DONE', cls: 'cyan',  delay: 2500 },
+        { text: 'Calibrating toxicity threshold ........ OK', cls: 'amber', delay: 2850 },
+        { text: '> ALL SYSTEMS NOMINAL — READY TO EXECUTE',   cls: 'pink',  delay: 3200 },
     ];
- 
+
     bootLines.forEach(({ text, cls, delay }) => {
         setTimeout(() => {
+            cursor.remove();
             const line = document.createElement('div');
             line.className = `terminal-line ${cls}`;
             line.textContent = text;
             terminal.appendChild(line);
+            terminal.appendChild(cursor);
+            terminal.scrollTop = terminal.scrollHeight;
         }, delay);
     });
- 
+
+    // Remove cursor after last line
+    setTimeout(() => cursor.remove(), 3600);
+
     // Progress bar
     setTimeout(() => {
         progressWrap.style.opacity = '1';
         let pct = 0;
         const interval = setInterval(() => {
-            pct += 2;
-            progressFill.style.width = pct + '%';
-            progressPct.textContent  = pct + '%';
+            pct += 1.5;
+            progressFill.style.width = Math.min(pct, 100) + '%';
+            progressPct.textContent  = Math.floor(Math.min(pct, 100)) + '%';
             if (pct >= 100) {
                 clearInterval(interval);
                 setTimeout(() => {
-                    features.style.opacity   = '1';
+                    sysStats.style.opacity = '1';
+                    features.style.opacity = '1';
                     launchWrap.style.opacity = '1';
+                    document.getElementById('hudLeft').classList.add('visible');
+                    document.getElementById('hudRight').classList.add('visible');
                 }, 300);
             }
-        }, 30);
-    }, 3000);
+        }, 35);
+    }, 3700);
+
+    // HUD animations — CPU, memory, neural bars
+    function animateHud() {
+        const cpu  = 72 + Math.floor(Math.random() * 20);
+        const mem  = 58 + Math.floor(Math.random() * 15);
+        const neu  = 80 + Math.floor(Math.random() * 18);
+        const nlp  = Math.floor(Math.random() * 3) + 6;
+
+        document.getElementById('cpuBar').style.width = cpu + '%';
+        document.getElementById('cpuVal').textContent  = cpu + '%';
+        document.getElementById('memBar').style.width = mem + '%';
+        document.getElementById('memVal').textContent  = Math.floor(mem * 6.4) + 'K';
+        document.getElementById('neuBar').style.width = neu + '%';
+        document.getElementById('neuVal').textContent  = neu + '%';
+        document.getElementById('nlpVal').textContent  = nlp + ' / 8';
+        document.getElementById('apiVal').textContent  = Math.random() > 0.1 ? 'ACTIVE' : 'PING...';
+        document.getElementById('sentVal').textContent = Math.random() > 0.15 ? 'READY' : 'LOADING';
+        document.getElementById('toxVal').textContent  = Math.random() > 0.15 ? 'ARMED' : 'CALIBRATING';
+    }
+
+    // Corner CPU fake stats
+    function updateCornerStats() {
+        document.getElementById('cpu0').textContent = 70 + Math.floor(Math.random() * 25);
+        document.getElementById('cpu1').textContent = 65 + Math.floor(Math.random() * 28);
+    }
+
+    setInterval(animateHud, 1200);
+    setInterval(updateCornerStats, 800);
+
+    // Uptime counter
+    let seconds = 0;
+    setInterval(() => {
+        seconds++;
+        const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+        const s = String(seconds % 60).padStart(2, '0');
+        const el = document.getElementById('uptime');
+        if (el) el.textContent = m + ':' + s;
+    }, 1000);
 </script>
 </body>
 </html>
