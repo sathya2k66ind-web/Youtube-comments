@@ -1,7 +1,7 @@
 from transformers import pipeline
 import re
 
-# Load once at startup — not on every call
+# Load once at startup — stays in memory for all requests
 sentiment_pipeline = pipeline(
     "sentiment-analysis",
     model="cardiffnlp/twitter-roberta-base-sentiment-latest",
@@ -11,8 +11,8 @@ sentiment_pipeline = pipeline(
 )
 
 def clean_text(text):
-    text = re.sub(r"http\S+", "", text)
-    text = re.sub(r"<.*?>", "", text)
+    text = re.sub(r"http\S+", "", text)    # remove links
+    text = re.sub(r"<.*?>", "", text)      # remove HTML
     return text.strip()
 
 def predict_sentiment(text):
@@ -22,7 +22,6 @@ def predict_sentiment(text):
     try:
         result = sentiment_pipeline(text)[0]
         label = result['label'].lower()
-        # Model returns: positive, neutral, negative
         if label == "positive":
             return "positive"
         elif label == "negative":
@@ -40,13 +39,3 @@ def is_toxic(text):
     ]
     text = text.lower()
     return any(word in text for word in toxic_words)
-```
-
----
-
-**Two things to update in `requirements.txt` as well**
-
-Remove `textblob` and make sure these are in there —
-```
-transformers>=4.30.0
-torch>=2.0.0
