@@ -1,18 +1,9 @@
-from transformers import pipeline
+from textblob import TextBlob
 import re
 
-# Load once at startup — stays in memory for all requestss
-sentiment_pipeline = pipeline(
-    "sentiment-analysis",
-    model="cardiffnlp/twitter-roberta-base-sentiment-latest",
-    tokenizer="cardiffnlp/twitter-roberta-base-sentiment-latest",
-    max_length=512,
-    truncation=True
-)
-
 def clean_text(text):
-    text = re.sub(r"http\S+", "", text)    # remove links
-    text = re.sub(r"<.*?>", "", text)      # remove HTML
+    text = re.sub(r"http\S+", "", text)
+    text = re.sub(r"<.*?>", "", text)
     return text.strip()
 
 def predict_sentiment(text):
@@ -20,11 +11,11 @@ def predict_sentiment(text):
     if not text:
         return "neutral"
     try:
-        result = sentiment_pipeline(text)[0]
-        label = result['label'].lower()
-        if label == "positive":
+        analysis = TextBlob(text)
+        polarity = analysis.sentiment.polarity
+        if polarity > 0.1:
             return "positive"
-        elif label == "negative":
+        elif polarity < -0.1:
             return "negative"
         else:
             return "neutral"
