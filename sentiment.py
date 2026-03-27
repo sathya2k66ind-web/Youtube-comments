@@ -1,7 +1,7 @@
 from transformers import pipeline
 import re
 
-# Load once at startup — stays in memory for all requests
+# Load once at startup — stays in memory for all requestss
 sentiment_pipeline = pipeline(
     "sentiment-analysis",
     model="cardiffnlp/twitter-roberta-base-sentiment-latest",
