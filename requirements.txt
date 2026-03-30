@@ -7,7 +7,7 @@ google-auth-httplib2==0.2.0
 requests==2.32.5
 transformers==4.40.0
 torch==2.11.0
-tokenizers==0.19.1
+tokenizers>=0.20.0
 safetensors==0.4.3
 huggingface-hub==0.23.0
 numpy==1.26.4
