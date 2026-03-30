@@ -15,58 +15,44 @@
             --bg-dark: #050510;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            margin: 0; padding: 0;
             background: var(--bg-dark);
             color: var(--cyan);
             font-family: 'VT323', monospace;
             overflow-x: hidden;
             cursor: crosshair;
+            min-height: 100vh;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 12px; }
-        ::-webkit-scrollbar-track { background: #000; border-left: 2px solid var(--cyan); }
-        ::-webkit-scrollbar-thumb { background: #333; border: 2px outset white; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #000; border-left: 1px solid var(--cyan); }
+        ::-webkit-scrollbar-thumb { background: #1a1a2e; border: 1px outset rgba(0,243,255,0.3); }
 
-        /* CRT scanlines */
+        /* CRT */
         .crt::before {
             content: "";
-            display: block;
-            position: fixed;
-            inset: 0;
+            position: fixed; inset: 0;
             background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.28) 50%),
                         linear-gradient(90deg,rgba(255,0,0,0.04),rgba(0,255,0,0.02),rgba(0,0,255,0.04));
             background-size: 100% 2px, 3px 100%;
-            z-index: 200;
-            pointer-events: none;
+            z-index: 9000; pointer-events: none;
         }
 
-        /* CRT flicker */
         .crt::after {
             content: "";
-            display: block;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,243,255,0.015);
-            opacity: 0;
-            z-index: 200;
-            pointer-events: none;
+            position: fixed; inset: 0;
+            background: rgba(0,243,255,0.012);
+            opacity: 0; z-index: 9000; pointer-events: none;
             animation: flicker 0.12s infinite;
         }
 
-        @keyframes flicker {
-            0%   { opacity: 0.015; }
-            50%  { opacity: 0.055; }
-            100% { opacity: 0.015; }
-        }
+        @keyframes flicker { 0%{opacity:.012} 50%{opacity:.05} 100%{opacity:.012} }
 
-        /* 3D Grid */
+        /* Grid */
         .cyber-grid {
-            position: fixed;
-            bottom: -50%; left: -50%;
+            position: fixed; bottom: -50%; left: -50%;
             width: 200%; height: 200%;
             background-image:
                 linear-gradient(transparent 65%, var(--hot-pink) 66%, transparent 67%),
@@ -74,8 +60,7 @@
             background-size: 50px 50px;
             transform: perspective(600px) rotateX(60deg);
             animation: gridMove 2s linear infinite;
-            z-index: -1;
-            opacity: 0.3;
+            z-index: -1; opacity: 0.25;
         }
 
         @keyframes gridMove {
@@ -83,443 +68,613 @@
             100% { transform: perspective(600px) rotateX(60deg) translateY(50px); }
         }
 
+        /* Glitch strips */
+        .glitch-strip {
+            position: fixed; left: 0; right: 0; height: 2px;
+            opacity: 0; z-index: 8000; pointer-events: none;
+            animation: stripFlash 7s infinite;
+        }
+        .glitch-strip:nth-child(2) { top: 28%; background: var(--hot-pink); animation-delay: 0s; }
+        .glitch-strip:nth-child(3) { top: 60%; background: var(--cyan); animation-delay: 2.8s; }
+        .glitch-strip:nth-child(4) { top: 78%; background: var(--lime); height: 1px; animation-delay: 5.1s; }
+
+        @keyframes stripFlash {
+            0%,95%,100%{opacity:0}
+            96%{opacity:.6;transform:scaleX(.5) translateX(20%)}
+            97%{opacity:.3;transform:scaleX(1)}
+            98%{opacity:0}
+        }
+
         /* Marquee */
         .cyber-marquee {
-            background: repeating-linear-gradient(45deg,#000,#000 10px,#0a0a0a 10px,#0a0a0a 20px);
+            background: repeating-linear-gradient(45deg,#000,#000 10px,#08080f 10px,#08080f 20px);
             color: var(--lime);
-            font-family: 'VT323', monospace;
-            font-size: 16px;
-            padding: 4px 0;
+            font-size: 15px; padding: 4px 0;
             border-bottom: 2px double var(--lime);
             text-shadow: 0 0 6px var(--lime);
             text-transform: uppercase;
-            white-space: nowrap;
-            overflow: hidden;
+            white-space: nowrap; overflow: hidden;
+            position: sticky; top: 0; z-index: 7000;
         }
 
-        .marquee-inner {
-            display: inline-block;
-            animation: marqueeScroll 20s linear infinite;
-        }
+        .marquee-inner { display: inline-block; animation: mq 22s linear infinite; }
+        @keyframes mq { 0%{transform:translateX(100vw)} 100%{transform:translateX(-100%)} }
 
-        @keyframes marqueeScroll {
-            0%   { transform: translateX(100vw); }
-            100% { transform: translateX(-100%); }
-        }
-
-        /* Glitch strips */
-        .glitch-strip {
-            position: fixed;
-            left: 0; right: 0;
-            height: 2px;
-            opacity: 0;
-            z-index: 250;
-            pointer-events: none;
-            animation: stripFlash 7s infinite;
-        }
-
-        .glitch-strip:nth-child(2) { top: 28%; background: var(--hot-pink); animation-delay: 0s; }
-        .glitch-strip:nth-child(3) { top: 60%; background: var(--cyan);     animation-delay: 2.8s; }
-        .glitch-strip:nth-child(4) { top: 78%; background: var(--lime);     height: 1px; animation-delay: 5.1s; }
-
-        @keyframes stripFlash {
-            0%, 95%, 100% { opacity: 0; }
-            96% { opacity: 0.6; transform: scaleX(0.5) translateX(20%); }
-            97% { opacity: 0.3; transform: scaleX(1); }
-            98% { opacity: 0; }
-        }
-
-        /* Corner decorations */
-        .corner-text {
-            position: fixed;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 7px;
-            line-height: 2;
-            z-index: 50;
-            opacity: 0.3;
-        }
-
-        .corner-tl { top: 36px; left: 10px; color: var(--lime);     text-shadow: 0 0 5px var(--lime); }
-        .corner-tr { top: 36px; right: 10px; color: var(--hot-pink); text-shadow: 0 0 5px var(--hot-pink); text-align: right; }
-
-        .blink { animation: blink 1s step-end infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
-
-        /* ── PROCESSING OVERLAY ── */
+        /* Processing overlay */
         .processing-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            z-index: 500;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-family: 'VT323', monospace;
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.88); z-index: 10000;
+            flex-direction: column; align-items: center; justify-content: center;
         }
-
         .processing-overlay.active { display: flex; }
 
         .proc-box {
-            border: 2px solid var(--cyan);
-            background: #000;
-            padding: 40px 60px;
-            text-align: center;
+            border: 2px solid var(--cyan); background: #000;
+            padding: 40px 60px; text-align: center;
             box-shadow: 0 0 40px var(--cyan), 0 0 80px rgba(0,243,255,0.2);
+            min-width: 360px;
         }
 
         .proc-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 20px;
-            color: var(--hot-pink);
-            text-shadow: 0 0 15px var(--hot-pink);
-            margin-bottom: 20px;
-            letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif; font-size: 18px;
+            color: var(--hot-pink); text-shadow: 0 0 15px var(--hot-pink);
+            margin-bottom: 20px; letter-spacing: 2px;
         }
 
         .proc-spinner {
-            font-size: 48px;
-            color: var(--cyan);
+            font-size: 52px; color: var(--cyan);
             text-shadow: 0 0 20px var(--cyan);
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 16px;
-            display: block;
+            animation: pspin .8s linear infinite;
+            margin-bottom: 16px; display: block;
         }
 
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .proc-lines { text-align: left; margin-top: 16px; min-width: 300px; }
+        @keyframes pspin { 100%{transform:rotate(360deg)} }
 
         .proc-line {
-            font-size: 16px;
-            color: var(--lime);
+            font-size: 15px; color: var(--lime);
             text-shadow: 0 0 5px var(--lime);
-            opacity: 0;
-            animation: lineIn 0.1s ease forwards;
-            margin-bottom: 3px;
+            opacity: 0; animation: linein .05s ease forwards;
+            margin-bottom: 4px; text-align: left;
+        }
+        @keyframes linein { to{opacity:1} }
+
+        /* ── MAIN LAYOUT ── */
+        .page-wrap {
+            display: flex;
+            align-items: flex-start;
+            gap: 0;
+            min-height: calc(100vh - 32px);
         }
 
-        @keyframes lineIn { to { opacity: 1; } }
+        /* Side HUD panels */
+        .hud-side {
+            width: 160px;
+            flex-shrink: 0;
+            padding: 12px 8px;
+            position: sticky;
+            top: 32px;
+            height: calc(100vh - 32px);
+            overflow: hidden;
+            border-right: 1px solid #0d0d1f;
+        }
 
-        /* Main container */
-        .container {
-            max-width: 960px;
-            margin: 30px auto;
-            padding: 0 20px;
+        .hud-side.right { border-right: none; border-left: 1px solid #0d0d1f; }
+
+        .hud-block {
+            border: 1px solid rgba(0,243,255,0.15);
+            background: rgba(0,243,255,0.02);
+            padding: 8px;
+            margin-bottom: 8px;
             position: relative;
-            z-index: 10;
+        }
+
+        .hud-block::before {
+            content: '';
+            position: absolute; top: -1px; left: -1px;
+            width: 6px; height: 6px;
+            border-top: 1px solid var(--cyan); border-left: 1px solid var(--cyan);
+        }
+
+        .hud-lbl {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px; color: rgba(0,243,255,0.4);
+            letter-spacing: 1px; text-transform: uppercase;
+            margin-bottom: 6px; display: block;
+        }
+
+        .hud-val {
+            font-size: 18px; color: var(--lime);
+            text-shadow: 0 0 6px var(--lime);
+        }
+
+        .hud-val.pink  { color: var(--hot-pink); text-shadow: 0 0 6px var(--hot-pink); }
+        .hud-val.amber { color: var(--amber);    text-shadow: 0 0 6px var(--amber); }
+        .hud-val.cyan  { color: var(--cyan);     text-shadow: 0 0 6px var(--cyan); }
+
+        .hud-mini-bar {
+            height: 4px; background: #001100;
+            border: 1px solid rgba(57,255,20,0.2);
+            margin-top: 4px; overflow: hidden;
+        }
+
+        .hud-mini-fill {
+            height: 100%; background: var(--lime);
+            box-shadow: 0 0 4px var(--lime);
+            transition: width 1s;
+        }
+
+        .hud-mini-fill.pink  { background: var(--hot-pink); box-shadow: 0 0 4px var(--hot-pink); }
+        .hud-mini-fill.amber { background: var(--amber);    box-shadow: 0 0 4px var(--amber); }
+
+        .hud-chart-mini {
+            height: 50px; display: flex; align-items: flex-end;
+            gap: 3px; margin-top: 6px;
+        }
+
+        .hud-bar-mini {
+            flex: 1; background: rgba(0,243,255,0.3);
+            border-top: 1px solid var(--cyan);
+            min-height: 4px;
+            transition: height .5s;
+        }
+
+        .hud-blink { animation: hblink 1.2s step-end infinite; }
+        @keyframes hblink { 50%{opacity:0} }
+
+        .corner-tl {
+            position: fixed; top: 38px; left: 168px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px; color: rgba(57,255,20,0.25);
+            line-height: 2; z-index: 50;
+        }
+
+        .corner-tr {
+            position: fixed; top: 38px; right: 168px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px; color: rgba(255,0,127,0.25);
+            line-height: 2; z-index: 50; text-align: right;
+        }
+
+        /* Main column */
+        .main-col {
+            flex: 1;
+            padding: 16px 12px;
+            min-width: 0;
         }
 
         /* OS Window */
         .os-window {
             background: #c0c0c0;
-            border: 4px outset #ffffff;
+            border: 3px outset #ffffff;
             padding: 2px;
-            box-shadow: 10px 10px 0 rgba(0,0,0,0.9),
-                        0 0 30px var(--cyan),
-                        0 0 60px rgba(0,243,255,0.12);
-            animation: bootUp 0.8s ease-out;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.9),
+                        0 0 25px var(--cyan),
+                        0 0 50px rgba(0,243,255,0.1);
+            animation: bootUp 0.7s ease-out;
         }
 
         @keyframes bootUp {
-            0%   { transform: scale(0.92) translateY(30px); opacity: 0; filter: brightness(2); }
+            0%   { transform: scale(0.95) translateY(20px); opacity: 0; filter: brightness(2); }
             100% { transform: scale(1) translateY(0); opacity: 1; filter: brightness(1); }
         }
 
         .title-bar {
             background: linear-gradient(90deg, #000080, #0050c8, #1084d0);
-            padding: 5px 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 4px 8px;
+            display: flex; justify-content: space-between; align-items: center;
             font-family: 'Press Start 2P', monospace;
-            font-size: 9px;
-            color: white;
+            font-size: 8px; color: white;
             border: 2px inset #ffffff;
             text-shadow: 1px 1px 0 #000;
         }
 
-        .window-controls { display: flex; gap: 3px; }
+        .window-controls { display: flex; gap: 2px; }
 
         .window-controls span {
-            display: inline-block;
-            width: 16px; height: 16px;
-            background: #c0c0c0;
-            border: 2px outset #fff;
-            color: black;
-            text-align: center;
-            line-height: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 10px;
+            display: inline-block; width: 14px; height: 14px;
+            background: #c0c0c0; border: 2px outset #fff;
+            color: black; text-align: center; line-height: 14px;
+            font-weight: bold; cursor: pointer; font-size: 9px;
         }
         .window-controls span:active { border: 2px inset #fff; }
 
         .os-content {
-            background: #000005;
+            background: #000008;
             border: 3px inset #ffffff;
-            padding: 28px 30px;
-            position: relative;
-            overflow: hidden;
+            padding: 20px 24px;
+            position: relative; overflow: hidden;
         }
 
-        /* Sweep inside window */
         .os-content::after {
             content: '';
-            position: absolute;
-            top: -100%; left: 0; right: 0;
-            height: 40%;
-            background: linear-gradient(transparent, rgba(0,243,255,0.025), transparent);
-            animation: sweep 5s linear infinite;
-            pointer-events: none;
+            position: absolute; top: -40%; left: 0; right: 0; height: 40%;
+            background: linear-gradient(transparent, rgba(0,243,255,0.02), transparent);
+            animation: sweep 5s linear infinite; pointer-events: none;
         }
+        @keyframes sweep { 0%{top:-40%} 100%{top:100%} }
 
-        @keyframes sweep { 0% { top: -40%; } 100% { top: 100%; } }
-
-        /* Spinning star */
         .y2k-star {
-            position: absolute;
-            top: 16px; right: 18px;
-            font-size: 32px;
-            color: var(--cyan);
-            animation: spinStar 3s linear infinite;
-            text-shadow: 0 0 20px var(--cyan);
+            position: absolute; top: 14px; right: 16px;
+            font-size: 28px; color: var(--cyan);
+            animation: sspin 3s linear infinite;
+            text-shadow: 0 0 16px var(--cyan);
         }
-
         .y2k-star-2 {
-            position: absolute;
-            top: 16px; left: 18px;
-            font-size: 20px;
-            color: var(--hot-pink);
-            animation: spinStar 5s linear infinite reverse;
-            text-shadow: 0 0 12px var(--hot-pink);
+            position: absolute; top: 14px; left: 16px;
+            font-size: 18px; color: var(--hot-pink);
+            animation: sspin 5s linear infinite reverse;
+            text-shadow: 0 0 10px var(--hot-pink);
         }
+        @keyframes sspin { 100%{transform:rotate(360deg)} }
 
-        @keyframes spinStar { 100% { transform: rotate(360deg); } }
-
-        /* Chrome title */
         h1.chrome-text {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            font-size: clamp(28px, 4vw, 40px);
-            text-align: center;
-            margin: 8px 0 28px;
+            font-family: 'Orbitron', sans-serif; font-weight: 800;
+            font-size: clamp(22px, 3.5vw, 38px);
+            text-align: center; margin: 6px 0 20px;
             text-transform: uppercase;
             background: linear-gradient(to bottom,
-                #fff 0%, #d0d0d0 30%,
-                #888 45%, #000 50%,
-                #666 60%, #fff 80%, #ccc 100%);
+                #fff 0%, #d0d0d0 30%, #888 45%, #000 50%, #666 60%, #fff 80%, #ccc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            -webkit-text-stroke: 1px rgba(255,255,255,0.5);
-            filter: drop-shadow(4px 4px 0 var(--hot-pink))
-                    drop-shadow(-3px -3px 0 var(--cyan));
+            -webkit-text-stroke: 1px rgba(255,255,255,0.4);
+            filter: drop-shadow(3px 3px 0 var(--hot-pink)) drop-shadow(-2px -2px 0 var(--cyan));
             letter-spacing: 3px;
-            animation: titleGlitch 9s infinite;
+            animation: tglitch 9s infinite;
         }
 
-        @keyframes titleGlitch {
-            0%, 92%, 100% { filter: drop-shadow(4px 4px 0 var(--hot-pink)) drop-shadow(-3px -3px 0 var(--cyan)); transform: translate(0); }
-            93% { filter: drop-shadow(7px 0 0 var(--hot-pink)) drop-shadow(-7px 0 0 var(--cyan)); transform: translate(-3px,0); }
-            94% { filter: drop-shadow(-7px 0 0 var(--hot-pink)) drop-shadow(7px 0 0 var(--lime)); transform: translate(3px,0); }
-            95% { filter: drop-shadow(4px 4px 0 var(--hot-pink)) drop-shadow(-3px -3px 0 var(--cyan)); transform: translate(0); }
+        @keyframes tglitch {
+            0%,92%,100%{filter:drop-shadow(3px 3px 0 var(--hot-pink)) drop-shadow(-2px -2px 0 var(--cyan));transform:translate(0)}
+            93%{filter:drop-shadow(6px 0 0 var(--hot-pink)) drop-shadow(-6px 0 0 var(--cyan));transform:translate(-3px,0)}
+            94%{filter:drop-shadow(-6px 0 0 var(--hot-pink)) drop-shadow(6px 0 0 var(--lime));transform:translate(3px,0)}
+            95%{filter:drop-shadow(3px 3px 0 var(--hot-pink)) drop-shadow(-2px -2px 0 var(--cyan));transform:translate(0)}
         }
 
         /* Form */
         form {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 28px;
-            position: relative;
+            display: flex; gap: 8px;
+            margin-bottom: 16px;
         }
 
         input {
-            flex: 1;
-            padding: 14px 16px;
+            flex: 1; padding: 12px 14px;
             background: #000d00;
             border: 2px solid var(--lime);
             color: var(--lime);
-            font-family: 'VT323', monospace;
-            font-size: 22px;
-            box-shadow: inset 0 0 12px rgba(57,255,20,0.4), 0 0 8px rgba(57,255,20,0.15);
-            outline: none;
-            text-shadow: 0 0 6px var(--lime);
-            transition: box-shadow 0.2s;
+            font-family: 'VT323', monospace; font-size: 20px;
+            box-shadow: inset 0 0 10px rgba(57,255,20,0.35), 0 0 6px rgba(57,255,20,0.12);
+            outline: none; text-shadow: 0 0 5px var(--lime);
         }
-
-        input:focus {
-            box-shadow: inset 0 0 18px rgba(57,255,20,0.6), 0 0 20px rgba(57,255,20,0.3);
-        }
-
-        input::placeholder { color: rgba(57,255,20,0.35); }
+        input:focus { box-shadow: inset 0 0 16px rgba(57,255,20,0.55), 0 0 16px rgba(57,255,20,0.28); }
+        input::placeholder { color: rgba(57,255,20,0.3); }
 
         button[type="submit"] {
-            padding: 0 32px;
+            padding: 0 28px;
             background: var(--hot-pink);
             border: 3px outset #ff66b2;
             color: white;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 0 18px var(--hot-pink);
-            transition: all 0.1s;
+            font-family: 'Orbitron', sans-serif; font-weight: bold;
+            font-size: 14px; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 0 16px var(--hot-pink);
         }
-
         button[type="submit"]:hover {
-            animation: glitchBtn 0.25s infinite;
-            background: var(--cyan);
-            color: #000;
-            box-shadow: 0 0 28px var(--cyan);
+            animation: gbtn .25s infinite;
+            background: var(--cyan); color: #000;
+            box-shadow: 0 0 24px var(--cyan);
         }
-
         button[type="submit"]:active { border: 3px inset #ff66b2; transform: translateY(2px); }
 
-        @keyframes glitchBtn {
-            0%   { transform: translate(0); }
-            25%  { transform: translate(-2px, 1px); }
-            50%  { transform: translate(2px,-1px); }
-            75%  { transform: translate(-1px, 2px); }
-            100% { transform: translate(0); }
+        @keyframes gbtn {
+            0%{transform:translate(0)} 25%{transform:translate(-2px,1px)}
+            50%{transform:translate(2px,-1px)} 75%{transform:translate(-1px,2px)} 100%{transform:translate(0)}
         }
 
         /* ── SENTIMENT SUMMARY BAR ── */
-        .sentiment-summary {
-            display: flex;
-            gap: 0;
-            margin-bottom: 20px;
-            border: 1px solid var(--cyan);
+        .sent-bar-wrap {
+            margin-bottom: 16px;
+            border: 1px solid rgba(0,243,255,0.3);
             overflow: hidden;
+        }
+
+        .sent-bar-labels {
+            display: flex;
             font-family: 'Press Start 2P', monospace;
-            font-size: 9px;
+            font-size: 8px;
         }
 
-        .sent-seg {
-            padding: 8px 0;
-            text-align: center;
-            flex: 1;
-            transition: flex 0.5s ease;
+        .sl { flex:1; text-align:center; padding: 6px 4px; border-right: 1px solid rgba(255,255,255,0.05); }
+        .sl.pos { color: var(--lime); background: rgba(57,255,20,0.08); text-shadow: 0 0 5px var(--lime); }
+        .sl.neu { color: silver; background: rgba(192,192,192,0.05); }
+        .sl.neg { color: var(--hot-pink); background: rgba(255,0,127,0.08); text-shadow: 0 0 5px var(--hot-pink); }
+        .sl.tox { color: #ff3333; background: rgba(255,0,0,0.06); }
+
+        .sent-bar-track {
+            height: 8px;
+            display: flex;
         }
 
-        .sent-seg.pos { background: rgba(57,255,20,0.15); color: var(--lime); border-right: 1px solid rgba(57,255,20,0.3); text-shadow: 0 0 6px var(--lime); }
-        .sent-seg.neu { background: rgba(192,192,192,0.1); color: silver; border-right: 1px solid rgba(192,192,192,0.2); }
-        .sent-seg.neg { background: rgba(255,0,127,0.15); color: var(--hot-pink); border-right: 1px solid rgba(255,0,127,0.3); text-shadow: 0 0 6px var(--hot-pink); }
-        .sent-seg.tox { background: rgba(255,0,0,0.1); color: #ff3333; }
+        .sb-fill {
+            height: 100%;
+            transition: width .8s ease;
+        }
 
-        /* Cards */
+        .sb-fill.pos { background: var(--lime); box-shadow: 0 0 8px var(--lime); }
+        .sb-fill.neu { background: silver; }
+        .sb-fill.neg { background: var(--hot-pink); box-shadow: 0 0 8px var(--hot-pink); }
+        .sb-fill.tox { background: #ff3333; box-shadow: 0 0 8px #ff3333; }
+
+        /* ── ENGAGEMENT SCORE ── */
+        .engagement-row {
+            display: flex; align-items: center; gap: 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(0,243,255,0.15);
+            background: rgba(0,243,255,0.02);
+            padding: 10px 14px;
+        }
+
+        .eng-label {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px; color: rgba(0,243,255,0.5);
+            letter-spacing: 1px; text-transform: uppercase;
+            min-width: 100px;
+        }
+
+        .eng-score {
+            font-family: 'Orbitron', monospace;
+            font-size: 28px; font-weight: 900;
+            min-width: 60px;
+        }
+
+        .eng-track {
+            flex: 1; height: 12px;
+            background: #001100; border: 1px solid rgba(57,255,20,0.2);
+            overflow: hidden; position: relative;
+        }
+
+        .eng-fill {
+            height: 100%;
+            background: repeating-linear-gradient(90deg, var(--lime) 0px, var(--lime) 8px, #003300 8px, #003300 12px);
+            box-shadow: 0 0 8px var(--lime);
+            transition: width 1s ease;
+        }
+
+        .eng-verdict {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px; min-width: 80px; text-align: right;
+        }
+
+        /* ── CARDS ── */
         .card {
-            background: rgba(0,0,10,0.9);
+            background: rgba(0,0,12,0.95);
             border: 1px solid var(--cyan);
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 4px 4px 0 var(--cyan), 0 0 15px rgba(0,243,255,0.1);
+            padding: 16px; margin-top: 14px;
+            box-shadow: 3px 3px 0 var(--cyan), 0 0 12px rgba(0,243,255,0.08);
             position: relative;
         }
+        .card::before { content:''; position:absolute; top:-3px; left:-3px; width:6px; height:6px; background:var(--hot-pink); }
+        .card::after  { content:''; position:absolute; bottom:-3px; right:-3px; width:6px; height:6px; background:var(--hot-pink); }
 
-        .card::before { content: ''; position: absolute; top: -4px; left: -4px; width: 8px; height: 8px; background: var(--hot-pink); }
-        .card::after  { content: ''; position: absolute; bottom: -4px; right: -4px; width: 8px; height: 8px; background: var(--hot-pink); }
-
-        .card h3 {
+        .card-title {
             font-family: 'Orbitron', sans-serif;
-            color: var(--hot-pink);
-            text-transform: uppercase;
-            border-bottom: 1px dashed rgba(255,0,127,0.4);
-            padding-bottom: 10px;
-            margin-top: 0;
-            font-size: 18px;
-            text-shadow: 0 0 8px var(--hot-pink);
-            letter-spacing: 2px;
+            color: var(--hot-pink); text-transform: uppercase;
+            border-bottom: 1px dashed rgba(255,0,127,0.3);
+            padding-bottom: 8px; margin-bottom: 12px;
+            font-size: 14px; text-shadow: 0 0 6px var(--hot-pink);
+            letter-spacing: 2px; display: flex; align-items: center; gap: 10px;
         }
 
+        /* Media */
         iframe {
-            width: 100%;
-            height: 380px;
-            border: 2px solid rgba(192,192,192,0.4);
+            width: 100%; height: 340px;
+            border: 1px solid rgba(192,192,192,0.3);
             background: #000;
         }
 
         .video-meta {
-            margin-top: 14px;
-            padding: 12px;
-            border-left: 3px solid var(--cyan);
-            background: rgba(0,243,255,0.03);
+            margin-top: 10px; padding: 10px;
+            border-left: 2px solid var(--cyan);
+            background: rgba(0,243,255,0.02);
         }
 
         .video-title {
-            color: var(--cyan);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 16px;
-            margin-bottom: 4px;
-            text-shadow: 0 0 8px var(--cyan);
+            color: var(--cyan); font-family: 'Orbitron', sans-serif;
+            font-size: 14px; margin-bottom: 3px;
+            text-shadow: 0 0 6px var(--cyan);
         }
 
-        .video-channel {
-            color: var(--lime);
-            font-size: 18px;
-            margin-bottom: 8px;
-            text-shadow: 0 0 4px var(--lime);
-        }
+        .video-channel { color: var(--lime); font-size: 16px; margin-bottom: 6px; }
 
         .video-desc {
-            font-size: 17px;
-            color: #888;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            font-size: 15px; color: #666; line-height: 1.4;
+            display: -webkit-box; -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical; overflow: hidden;
         }
 
-        /* Chart */
+        /* ── DUAL CHART ROW ── */
+        .chart-row {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
         .chart-container {
+            position: relative; height: 260px;
+            background: repeating-linear-gradient(0deg, #000800, #000800 1px, #000 1px, #000 16px);
+            border: 1px solid rgba(57,255,20,0.2); padding: 8px;
+        }
+
+        .doughnut-wrap {
+            display: flex; flex-direction: column; gap: 8px;
+        }
+
+        .doughnut-container {
+            position: relative; height: 200px;
+            background: #000; border: 1px solid rgba(0,243,255,0.2);
+            padding: 8px; display: flex; align-items: center; justify-content: center;
+        }
+
+        .doughnut-legend {
+            display: flex; flex-direction: column; gap: 4px;
+        }
+
+        .dl-item {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 13px;
+        }
+
+        .dl-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ── WORD FREQUENCY TERMINAL ── */
+        .word-terminal {
+            background: #000;
+            border: 1px solid var(--lime);
+            box-shadow: inset 0 0 10px rgba(57,255,20,0.08);
+            padding: 12px; margin-top: 14px;
+        }
+
+        .wt-header {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px; color: var(--lime);
+            text-shadow: 0 0 5px var(--lime);
+            letter-spacing: 2px; margin-bottom: 10px;
+            border-bottom: 1px solid rgba(57,255,20,0.2);
+            padding-bottom: 6px;
+        }
+
+        .word-row {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 5px; font-size: 15px;
+        }
+
+        .word-key {
+            color: var(--cyan); min-width: 100px;
+            text-shadow: 0 0 4px var(--cyan);
+        }
+
+        .word-bar-wrap {
+            flex: 1; height: 8px;
+            background: #001100; border: 1px solid rgba(0,243,255,0.15);
+        }
+
+        .word-bar-fill {
+            height: 100%; background: var(--cyan);
+            box-shadow: 0 0 4px var(--cyan);
+        }
+
+        .word-count {
+            color: rgba(0,243,255,0.5); font-size: 13px;
+            min-width: 30px; text-align: right;
+        }
+
+        /* ── STATS GRID ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .stat-box {
+            border: 1px solid rgba(0,243,255,0.2);
+            background: rgba(0,243,255,0.02);
+            padding: 10px; text-align: center;
             position: relative;
-            height: 300px;
-            width: 100%;
-            background: repeating-linear-gradient(
-                0deg, #000800, #000800 1px, #000 1px, #000 18px
-            );
-            border: 1px inset var(--lime);
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute; top: -1px; left: -1px;
+            width: 5px; height: 5px;
+            border-top: 1px solid var(--cyan); border-left: 1px solid var(--cyan);
+        }
+
+        .stat-num {
+            font-family: 'Orbitron', monospace;
+            font-size: 22px; font-weight: 700;
+            display: block; margin-bottom: 3px;
+        }
+
+        .stat-lbl {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px; color: rgba(0,243,255,0.4);
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+
+        /* ── COMMENTS SPLIT ── */
+        .comments-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .comment-col {
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.06);
             padding: 10px;
         }
 
-        /* Comments */
-        .comment {
-            border-bottom: 1px dotted rgba(255,255,255,0.1);
-            padding: 14px 0;
-            font-size: 18px;
-            color: #ddd;
-            line-height: 1.5;
+        .col-header {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px; letter-spacing: 1px;
+            padding-bottom: 6px; margin-bottom: 8px;
+            border-bottom: 1px dashed rgba(255,255,255,0.08);
         }
 
+        .comment {
+            padding: 8px 0;
+            border-bottom: 1px dotted rgba(255,255,255,0.06);
+            font-size: 15px; color: #ccc; line-height: 1.4;
+        }
         .comment:last-child { border-bottom: none; }
-        .comment p { margin: 8px 0 0; }
+
+        .comment-meta {
+            display: flex; align-items: center; gap: 6px; margin-bottom: 4px;
+        }
 
         .badge {
-            padding: 2px 8px;
+            padding: 1px 6px;
             font-family: 'Press Start 2P', monospace;
-            font-size: 9px;
-            border: 2px outset #fff;
-            color: #000;
-            display: inline-block;
-            margin-right: 8px;
+            font-size: 7px; border: 1px outset #fff;
+            color: #000; display: inline-block;
             text-transform: uppercase;
         }
 
-        .positive { background: var(--lime);     box-shadow: 0 0 8px var(--lime); }
-        .neutral  { background: silver;           box-shadow: 0 0 8px silver; }
-        .negative { background: #ff0000; color: white; box-shadow: 0 0 8px #f00; }
-        .toxic    {
-            background: #000; color: #f00;
-            border: 2px solid #f00;
-            animation: toxicBlink 0.5s infinite;
+        .positive { background: var(--lime); box-shadow: 0 0 6px var(--lime); }
+        .neutral  { background: silver; }
+        .negative { background: #ff0000; color: white; box-shadow: 0 0 6px #f00; }
+        .toxic    { background: #000; color: #f00; border: 1px solid #f00; animation: txblink .5s infinite; }
+
+        @keyframes txblink {
+            0%,100%{opacity:1;box-shadow:0 0 8px red}
+            50%{opacity:.4;box-shadow:none}
         }
 
-        @keyframes toxicBlink {
-            0%, 100% { opacity: 1; box-shadow: 0 0 12px red; }
-            50%       { opacity: 0.5; box-shadow: none; }
+        /* All comments section */
+        .all-comments { margin-top: 0; }
+
+        .comment-full {
+            padding: 10px 0;
+            border-bottom: 1px dotted rgba(255,255,255,0.06);
+            font-size: 16px; color: #ccc; line-height: 1.4;
         }
+
+        .comment-full:last-child { border-bottom: none; }
+
+        /* Toxicity radar */
+        .tox-list { margin-top: 0; }
+
+        .tox-item {
+            padding: 8px 0;
+            border-bottom: 1px dotted rgba(255,0,0,0.15);
+            font-size: 15px; color: #ff6666;
+        }
+
+        .tox-item:last-child { border-bottom: none; }
     </style>
 </head>
 
@@ -530,168 +685,439 @@
 <div class="glitch-strip"></div>
 <div class="glitch-strip"></div>
 
-<!-- Processing overlay -->
 <div class="processing-overlay" id="procOverlay">
     <div class="proc-box">
         <div class="proc-title">// EXECUTING ANALYSIS //</div>
         <span class="proc-spinner">◈</span>
-        <div class="proc-lines" id="procLines"></div>
+        <div id="procLines"></div>
     </div>
 </div>
 
 <div class="cyber-marquee">
     <span class="marquee-inner">
-        /// SYSTEM ONLINE /// Y2K SENTIMENT ANALYZER v2.0 /// UPLOADING VIDEO DATA /// ANALYZING NEURAL NETWORKS /// NO CARRIER ///&nbsp;&nbsp;&nbsp;
+        /// SYSTEM ONLINE /// Y2K SENTIMENT ANALYZER v2.0 /// UPLOADING VIDEO DATA /// ANALYZING NEURAL NETWORKS /// NO CARRIER /// BERT-HYBRID ACTIVE /// TOXICITY RADAR ARMED ///&nbsp;&nbsp;&nbsp;
     </span>
 </div>
 
-<!-- Corner decorations -->
-<div class="corner-text corner-tl">
-    SYS: ONLINE<br>
-    MODE: ANALYZE<br>
-    <span class="blink">_</span>
-</div>
+<div class="corner-tl">SYS: ONLINE<br>MODE: ANALYZE<br><span style="animation:hblink 1s step-end infinite;display:inline-block">_</span></div>
+<div class="corner-tr">API: LINKED<br>NLP: ARMED<br><span style="color:#ff007f;animation:hblink 1s step-end infinite;display:inline-block">▮</span></div>
+@keyframes hblink { 50%{opacity:0} }
 
-<div class="corner-text corner-tr">
-    API: LINKED<br>
-    NLP: READY<br>
-    <span class="blink" style="color:#ff007f">▮</span>
-</div>
+<div class="page-wrap">
 
-<div class="container">
-    <div class="os-window">
-        <div class="title-bar">
-            <span>C:\Y2K_TOOLS\analyzer.exe — [SYSTEM READY]</span>
-            <div class="window-controls">
-                <span>_</span><span>□</span><span>✕</span>
+    <!-- LEFT HUD -->
+    <div class="hud-side">
+        <div class="hud-block">
+            <span class="hud-lbl">SYS LOAD</span>
+            <div class="hud-val" id="h-cpu">--</div>
+            <div class="hud-mini-bar"><div class="hud-mini-fill" id="h-cpu-bar" style="width:0%"></div></div>
+        </div>
+        <div class="hud-block">
+            <span class="hud-lbl">MEMORY</span>
+            <div class="hud-val pink" id="h-mem">--</div>
+            <div class="hud-mini-bar"><div class="hud-mini-fill pink" id="h-mem-bar" style="width:0%"></div></div>
+        </div>
+        <div class="hud-block">
+            <span class="hud-lbl">API CALLS</span>
+            <div class="hud-val cyan" id="h-api">0</div>
+            <div class="hud-mini-bar"><div class="hud-mini-fill" id="h-api-bar" style="width:30%"></div></div>
+        </div>
+        <div class="hud-block">
+            <span class="hud-lbl">NLP CORES</span>
+            <div class="hud-val amber" id="h-nlp">4/8</div>
+            <div class="hud-mini-bar"><div class="hud-mini-fill amber" id="h-nlp-bar" style="width:50%"></div></div>
+        </div>
+        <div class="hud-block">
+            <span class="hud-lbl">UPTIME</span>
+            <div class="hud-val" style="font-size:14px" id="h-uptime">00:00</div>
+        </div>
+        <div class="hud-block">
+            <span class="hud-lbl">PKT/SEC</span>
+            <div class="hud-chart-mini" id="h-spark"></div>
+        </div>
+        <div class="hud-block">
+            <span class="hud-lbl">STATUS</span>
+            <div class="hud-val" style="font-size:13px" id="h-status">STANDBY<span class="hud-blink">_</span></div>
+        </div>
+        <div class="hud-block">
+            <span class="hud-lbl">MODEL</span>
+            <div style="font-size:11px;color:rgba(0,243,255,0.6);line-height:1.6;">
+                BERT<br>RoBERTa<br>Cardiff<br>NLP v3
             </div>
         </div>
+    </div>
 
-        <div class="os-content">
-            <div class="y2k-star-2">✦</div>
-            <div class="y2k-star">✽</div>
-
-            <h1 class="chrome-text">Y2K Analyzer</h1>
-
-            <form method="POST" id="analyzeForm">
-                <input type="text" name="video_url" placeholder="> PASTE_YOUTUBE_URL_HERE_" required autocomplete="off">
-                <button type="submit">EXECUTE</button>
-            </form>
-
-            {% if results %}
-            <!-- Sentiment summary bar -->
-            <div class="sentiment-summary">
-                <div class="sent-seg pos">POS<br>{{ results.positive }}%</div>
-                <div class="sent-seg neu">NEU<br>{{ results.neutral }}%</div>
-                <div class="sent-seg neg">NEG<br>{{ results.negative }}%</div>
-                <div class="sent-seg tox">TOX<br>{{ results.toxic }}%</div>
-            </div>
-            {% endif %}
-
-            {% if video %}
-            <div class="card">
-                <h3>[ MEDIA_PLAYER ]</h3>
-                <iframe src="https://www.youtube.com/embed/{{ video_id }}" allowfullscreen></iframe>
-                <div class="video-meta">
-                    <div class="video-title">{{ video.title }}</div>
-                    <div class="video-channel">> CHANNEL: {{ video.channel }}</div>
-                    <div class="video-desc">{{ video.description }}</div>
-                </div>
-            </div>
-            {% endif %}
-
-            {% if results %}
-            <div class="card">
-                <h3>[ DATA_VISUALIZATION ]</h3>
-                <div class="chart-container">
-                    <canvas id="chart"></canvas>
+    <!-- MAIN -->
+    <div class="main-col">
+        <div class="os-window">
+            <div class="title-bar">
+                <span>C:\Y2K_TOOLS\analyzer.exe — [SYSTEM READY] — v2.0</span>
+                <div class="window-controls">
+                    <span>_</span><span>□</span><span>✕</span>
                 </div>
             </div>
 
-            <script>
+            <div class="os-content">
+                <div class="y2k-star-2">✦</div>
+                <div class="y2k-star">✽</div>
+
+                <h1 class="chrome-text">Y2K Analyzer</h1>
+
+                <form method="POST" id="analyzeForm">
+                    <input type="text" name="video_url" placeholder="> PASTE_YOUTUBE_URL_HERE_" required autocomplete="off">
+                    <button type="submit">EXECUTE</button>
+                </form>
+
+                {% if results %}
+                <!-- Sentiment bar -->
+                <div class="sent-bar-wrap">
+                    <div class="sent-bar-labels">
+                        <div class="sl pos">POS &nbsp; {{ results.positive }}%</div>
+                        <div class="sl neu">NEU &nbsp; {{ results.neutral }}%</div>
+                        <div class="sl neg">NEG &nbsp; {{ results.negative }}%</div>
+                        <div class="sl tox">TOX &nbsp; {{ results.toxic }}%</div>
+                    </div>
+                    <div class="sent-bar-track">
+                        <div class="sb-fill pos" style="width:{{ results.positive }}%"></div>
+                        <div class="sb-fill neu" style="width:{{ results.neutral }}%"></div>
+                        <div class="sb-fill neg" style="width:{{ results.negative }}%"></div>
+                        <div class="sb-fill tox" style="width:{{ results.toxic }}%"></div>
+                    </div>
+                </div>
+
+                <!-- Engagement score -->
+                {% set eng = ((results.positive * 1.0 - results.negative * 0.8 + 50) | round | int) %}
+                {% set eng = [0, [100, eng] | min] | max %}
+                {% set verdict = 'EXCELLENT' if eng >= 75 else ('GOOD' if eng >= 55 else ('MIXED' if eng >= 35 else 'NEGATIVE')) %}
+                {% set vcol = '#39ff14' if eng >= 75 else ('#ffb800' if eng >= 55 else ('#ff6600' if eng >= 35 else '#ff0000')) %}
+
+                <div class="engagement-row">
+                    <div class="eng-label">ENGAGEMENT<br>SCORE</div>
+                    <div class="eng-score" style="color:{{ vcol }};text-shadow:0 0 12px {{ vcol }};">{{ eng }}</div>
+                    <div class="eng-track">
+                        <div class="eng-fill" style="width:{{ eng }}%;background:repeating-linear-gradient(90deg,{{ vcol }} 0px,{{ vcol }} 8px,rgba(0,0,0,0.3) 8px,rgba(0,0,0,0.3) 12px);box-shadow:0 0 8px {{ vcol }};"></div>
+                    </div>
+                    <div class="eng-verdict" style="color:{{ vcol }};text-shadow:0 0 8px {{ vcol }};">{{ verdict }}</div>
+                </div>
+
+                <!-- Stats grid -->
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-num" style="color:var(--lime);text-shadow:0 0 8px var(--lime);">{{ results.positive }}%</span>
+                        <span class="stat-lbl">Positive</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-num" style="color:silver;">{{ results.neutral }}%</span>
+                        <span class="stat-lbl">Neutral</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-num" style="color:var(--hot-pink);text-shadow:0 0 8px var(--hot-pink);">{{ results.negative }}%</span>
+                        <span class="stat-lbl">Negative</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-num" style="color:#ff3333;text-shadow:0 0 8px #ff3333;">{{ results.toxic }}%</span>
+                        <span class="stat-lbl">Toxic</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if video %}
+                <div class="card">
+                    <div class="card-title">[ MEDIA_PLAYER ]</div>
+                    <iframe src="https://www.youtube.com/embed/{{ video_id }}" allowfullscreen></iframe>
+                    <div class="video-meta">
+                        <div class="video-title">{{ video.title }}</div>
+                        <div class="video-channel">> CHANNEL: {{ video.channel }}</div>
+                        <div class="video-desc">{{ video.description }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if results %}
+                <!-- Dual charts -->
+                <div class="card">
+                    <div class="card-title">[ DATA_VISUALIZATION ]</div>
+                    <div class="chart-row">
+                        <div class="chart-container">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                        <div class="doughnut-wrap">
+                            <div class="doughnut-container">
+                                <canvas id="doughChart"></canvas>
+                            </div>
+                            <div class="doughnut-legend">
+                                <div class="dl-item"><div class="dl-dot" style="background:#39ff14;box-shadow:0 0 4px #39ff14"></div><span style="color:#39ff14">Positive {{ results.positive }}%</span></div>
+                                <div class="dl-item"><div class="dl-dot" style="background:silver"></div><span style="color:silver">Neutral {{ results.neutral }}%</span></div>
+                                <div class="dl-item"><div class="dl-dot" style="background:#ff007f;box-shadow:0 0 4px #ff007f"></div><span style="color:#ff007f">Negative {{ results.negative }}%</span></div>
+                                <div class="dl-item"><div class="dl-dot" style="background:#ff3333;box-shadow:0 0 4px #ff3333"></div><span style="color:#ff3333">Toxic {{ results.toxic }}%</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
                 Chart.defaults.color = '#39ff14';
                 Chart.defaults.font.family = "'VT323', monospace";
-                Chart.defaults.font.size = 18;
+                Chart.defaults.font.size = 16;
 
-                new Chart(document.getElementById('chart'), {
+                new Chart(document.getElementById('barChart'), {
                     type: 'bar',
                     data: {
-                        labels: ['[POSITIVE]', '[NEUTRAL]', '[NEGATIVE]'],
+                        labels: ['[POS]', '[NEU]', '[NEG]', '[TOX]'],
                         datasets: [{
-                            label: 'DATA_%',
-                            data: [{{ results.positive }}, {{ results.neutral }}, {{ results.negative }}],
-                            backgroundColor: [
-                                'rgba(57,255,20,0.75)',
-                                'rgba(192,192,192,0.75)',
-                                'rgba(255,0,127,0.75)'
-                            ],
-                            borderColor: ['#39ff14','#ffffff','#ff007f'],
-                            borderWidth: 2,
-                            borderRadius: 0,
+                            data: [{{ results.positive }}, {{ results.neutral }}, {{ results.negative }}, {{ results.toxic }}],
+                            backgroundColor: ['rgba(57,255,20,.7)','rgba(192,192,192,.7)','rgba(255,0,127,.7)','rgba(255,51,51,.7)'],
+                            borderColor: ['#39ff14','#fff','#ff007f','#ff3333'],
+                            borderWidth: 2, borderRadius: 0,
                         }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
+                        responsive: true, maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 100,
-                                ticks: { callback: v => v + '%' },
-                                grid: { color: 'rgba(0,243,255,0.15)', lineWidth: 1 }
-                            },
-                            x: { grid: { color: 'rgba(0,243,255,0.15)', lineWidth: 1 } }
+                            y: { beginAtZero: true, max: 100,
+                                 ticks: { callback: v => v+'%' },
+                                 grid: { color: 'rgba(0,243,255,.12)', lineWidth: 1 } },
+                            x: { grid: { color: 'rgba(0,243,255,.12)', lineWidth: 1 } }
                         },
-                        animation: { duration: 2000, easing: 'easeOutElastic' }
+                        animation: { duration: 1800, easing: 'easeOutElastic' }
                     }
                 });
-            </script>
-            {% endif %}
 
-            {% if comments %}
-            <div class="card">
-                <h3>[ RAW_DATA_STREAM ]</h3>
-                {% for c in comments %}
-                <div class="comment">
-                    <span class="badge {{ c.sentiment }}">{{ c.sentiment.upper() }}</span>
-                    {% if c.toxic %}
-                        <span class="badge toxic">! TOXIC_DETECTED !</span>
-                    {% endif %}
-                    <p>> {{ c.text }}</p>
+                new Chart(document.getElementById('doughChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Positive','Neutral','Negative','Toxic'],
+                        datasets: [{
+                            data: [{{ results.positive }}, {{ results.neutral }}, {{ results.negative }}, {{ results.toxic }}],
+                            backgroundColor: ['rgba(57,255,20,.75)','rgba(192,192,192,.75)','rgba(255,0,127,.75)','rgba(255,51,51,.75)'],
+                            borderColor: ['#39ff14','#aaa','#ff007f','#ff3333'],
+                            borderWidth: 2,
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: { label: ctx => ctx.label + ': ' + ctx.parsed + '%' }
+                            }
+                        },
+                        animation: { duration: 2000 }
+                    }
+                });
+                </script>
+                {% endif %}
+
+                {% if comments %}
+                <!-- Word frequency terminal -->
+                <div class="card">
+                    <div class="card-title">[ WORD_FREQUENCY_ANALYSIS ]</div>
+                    <div class="word-terminal">
+                        <div class="wt-header">TOP KEYWORDS // COMMENT CORPUS</div>
+                        <div id="wordFreqRows">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
                 </div>
-                {% endfor %}
-            </div>
-            {% endif %}
 
+                <!-- Comments split view -->
+                <div class="card">
+                    <div class="card-title">[ SENTIMENT_SPLIT_VIEW ]</div>
+                    <div class="comments-split">
+                        <div class="comment-col">
+                            <div class="col-header" style="color:var(--lime);text-shadow:0 0 5px var(--lime);">// POSITIVE SIGNALS</div>
+                            {% for c in comments %}
+                            {% if c.sentiment == 'positive' %}
+                            <div class="comment">
+                                <div class="comment-meta">
+                                    <span class="badge positive">POS</span>
+                                    {% if c.toxic %}<span class="badge toxic">TOXIC</span>{% endif %}
+                                </div>
+                                <span style="color:#888;">> </span>{{ c.text }}
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="comment-col">
+                            <div class="col-header" style="color:var(--hot-pink);text-shadow:0 0 5px var(--hot-pink);">// NEGATIVE SIGNALS</div>
+                            {% for c in comments %}
+                            {% if c.sentiment == 'negative' %}
+                            <div class="comment">
+                                <div class="comment-meta">
+                                    <span class="badge negative">NEG</span>
+                                    {% if c.toxic %}<span class="badge toxic">TOXIC</span>{% endif %}
+                                </div>
+                                <span style="color:#888;">> </span>{{ c.text }}
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Full raw stream -->
+                <div class="card">
+                    <div class="card-title">[ RAW_DATA_STREAM ]</div>
+                    <div class="all-comments">
+                        {% for c in comments %}
+                        <div class="comment-full">
+                            <div class="comment-meta">
+                                <span class="badge {{ c.sentiment }}">{{ c.sentiment.upper() }}</span>
+                                {% if c.toxic %}<span class="badge toxic">! TOXIC !</span>{% endif %}
+                            </div>
+                            <span style="color:#555;">> </span>{{ c.text }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <script>
+                // Word frequency from comments
+                const rawComments = [{% for c in comments %}"{{ c.text | replace('"', '') }}"{% if not loop.last %},{% endif %}{% endfor %}];
+                const stopwords = new Set(['the','a','an','and','or','but','in','on','at','to','for','of','with','is','was','are','i','you','it','this','that','be','have','do','they','he','she','we','not','so','just','its','my','your','me','if','what','how','why','when','get','can','will','all','one','some','would','there','like','im','its','dont','thats','which','from','by','as','out','up','about','into','than','been','has','had','more','were','her','him','his','their','our','us','who','also','but','no','yes','ok','wow']);
+                const freq = {};
+                rawComments.forEach(c => {
+                    c.toLowerCase().replace(/[^a-z\s]/g,'').split(/\s+/).forEach(w => {
+                        if (w.length > 2 && !stopwords.has(w)) freq[w] = (freq[w]||0)+1;
+                    });
+                });
+                const sorted = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,12);
+                const maxFreq = sorted[0]?.[1] || 1;
+                const container = document.getElementById('wordFreqRows');
+                sorted.forEach(([word, count]) => {
+                    const pct = Math.round(count/maxFreq*100);
+                    container.innerHTML += `
+                    <div class="word-row">
+                        <span class="word-key">${word}</span>
+                        <div class="word-bar-wrap"><div class="word-bar-fill" style="width:${pct}%"></div></div>
+                        <span class="word-count">×${count}</span>
+                    </div>`;
+                });
+                </script>
+                {% endif %}
+
+            </div>
         </div>
     </div>
+
+    <!-- RIGHT HUD -->
+    <div class="hud-side right">
+        <div class="hud-block">
+            <span class="hud-lbl">SENTIMENT</span>
+            <div class="hud-val" id="r-sent">--</div>
+        </div>
+        <div class="hud-block">
+            <span class="hud-lbl">TOXICITY</span>
+            <div class="hud-val pink" id="r-tox">--</div>
+            <div class="hud-mini-bar"><div class="hud-mini-fill pink" id="r-tox-bar" style="width:0%"></div></div>
+        </div>
+        <div class="hud-block">
+            <span class="hud-lbl">SIGNAL</span>
+            <div class="hud-val amber" id="r-sig">████▒</div>
+        </div>
+        <div class="hud-block">
+            <span class="hud-lbl">LATENCY</span>
+            <div class="hud-val" id="r-lat">12ms</div>
+        </div>
+        <div class="hud-block">
+            <span class="hud-lbl">PACKETS</span>
+            <div class="hud-val cyan" id="r-pkt">0</div>
+        </div>
+        <div class="hud-block">
+            <span class="hud-lbl">ACCURACY</span>
+            <div class="hud-val">94.2%</div>
+            <div class="hud-mini-bar"><div class="hud-mini-fill" style="width:94%"></div></div>
+        </div>
+        <div class="hud-block">
+            <span class="hud-lbl">BERT CONF</span>
+            <div class="hud-val amber" id="r-conf">--</div>
+            <div class="hud-mini-bar"><div class="hud-mini-fill amber" id="r-conf-bar" style="width:0%"></div></div>
+        </div>
+        <div class="hud-block">
+            <span class="hud-lbl">IP ORIGIN</span>
+            <div style="font-size:11px;color:rgba(0,243,255,0.5);line-height:1.8;" id="r-ip">
+                192.168.Y2K<br>PORT: 1337<br>PROTO: HTTPS
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
-    // Show processing overlay on form submit
+    // Processing overlay
     document.getElementById('analyzeForm').addEventListener('submit', function() {
-        const overlay = document.getElementById('procOverlay');
-        overlay.classList.add('active');
-
+        document.getElementById('procOverlay').classList.add('active');
         const lines = [
-            { text: '> Extracting video ID...', delay: 200 },
-            { text: '> Fetching comments via API...', delay: 700 },
-            { text: '> Running sentiment analysis...', delay: 1400 },
-            { text: '> Scanning for toxic content...', delay: 2100 },
-            { text: '> Generating visualizations...', delay: 2800 },
+            { text: '> Extracting video ID from URL...', delay: 200 },
+            { text: '> Authenticating YouTube Data API...', delay: 700 },
+            { text: '> Fetching top 50 comments...', delay: 1300 },
+            { text: '> Running RoBERTa sentiment pipeline...', delay: 2000 },
+            { text: '> Scanning for toxic content...', delay: 2700 },
+            { text: '> Computing word frequency corpus...', delay: 3300 },
+            { text: '> Generating visualizations...', delay: 3900 },
         ];
-
-        const container = document.getElementById('procLines');
-        lines.forEach(({ text, delay }) => {
+        const c = document.getElementById('procLines');
+        lines.forEach(({text, delay}) => {
             setTimeout(() => {
                 const el = document.createElement('div');
                 el.className = 'proc-line';
                 el.textContent = text;
-                container.appendChild(el);
+                c.appendChild(el);
             }, delay);
         });
     });
+
+    // HUD animations
+    let pktCount = 0;
+    let seconds  = 0;
+
+    function animHud() {
+        const cpu = 65 + Math.floor(Math.random()*28);
+        const mem = 55 + Math.floor(Math.random()*20);
+        const nlp = Math.floor(Math.random()*3)+5;
+        const lat = 8 + Math.floor(Math.random()*20);
+        const conf= 78 + Math.floor(Math.random()*18);
+        pktCount += Math.floor(Math.random()*8)+2;
+
+        document.getElementById('h-cpu').textContent = cpu+'%';
+        document.getElementById('h-cpu-bar').style.width = cpu+'%';
+        document.getElementById('h-mem').textContent = Math.floor(mem*6.4)+'K';
+        document.getElementById('h-mem-bar').style.width = mem+'%';
+        document.getElementById('h-nlp').textContent = nlp+'/8';
+        document.getElementById('h-nlp-bar').style.width = (nlp/8*100)+'%';
+        document.getElementById('h-api').textContent = Math.floor(pktCount/10);
+        document.getElementById('h-api-bar').style.width = Math.min(pktCount/10,100)+'%';
+        document.getElementById('h-status').innerHTML = cpu>85?'<span style="color:#ff007f">HIGH LOAD</span>_':'ACTIVE<span class="hud-blink">_</span>';
+
+        document.getElementById('r-sent').textContent = Math.random()>.3?'NOMINAL':'ALERT';
+        document.getElementById('r-tox').textContent  = Math.floor(Math.random()*15)+'%';
+        document.getElementById('r-tox-bar').style.width = Math.floor(Math.random()*15)+'%';
+        document.getElementById('r-lat').textContent  = lat+'ms';
+        document.getElementById('r-pkt').textContent  = pktCount;
+        document.getElementById('r-conf').textContent = conf+'%';
+        document.getElementById('r-conf-bar').style.width = conf+'%';
+
+        // Sparkline
+        const spark = document.getElementById('h-spark');
+        spark.innerHTML = '';
+        for(let i=0;i<8;i++){
+            const h = 10+Math.floor(Math.random()*38);
+            spark.innerHTML += `<div class="hud-bar-mini" style="height:${h}px;opacity:${.4+i*.08}"></div>`;
+        }
+    }
+
+    function updateUptime() {
+        seconds++;
+        const m = String(Math.floor(seconds/60)).padStart(2,'0');
+        const s = String(seconds%60).padStart(2,'0');
+        const el = document.getElementById('h-uptime');
+        if(el) el.textContent = m+':'+s;
+    }
+
+    setInterval(animHud, 1100);
+    setInterval(updateUptime, 1000);
+    animHud();
 </script>
 </body>
 </html>
