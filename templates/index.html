@@ -836,7 +836,7 @@
                 {% if results %}
                 <!-- Dual charts -->
                 <div class="card">
-                    <div class="card-title">[ DATA_VISUALIZATION ]</div>
+                    <div class="card-title">[ DATA_VISUALIZATION_1 ] Sentiment Distribution</div>
                     <div class="chart-row">
                         <div class="chart-container">
                             <canvas id="barChart"></canvas>
@@ -855,11 +855,192 @@
                     </div>
                 </div>
 
+                <!-- Extended Analytics Grid -->
+                <div class="card">
+                    <div class="card-title">[ DATA_ANALYTICS_DASHBOARD ] Extended Metrics</div>
+                    <div class="stats-grid" style="grid-template-columns: repeat(6, 1fr);">
+                        <div class="stat-box">
+                            <span class="stat-num" style="color:#39ff14;text-shadow:0 0 8px #39ff14;">{{ comments | length }}</span>
+                            <span class="stat-lbl">Total Comments</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num" style="color:#00f3ff;text-shadow:0 0 8px #00f3ff;" id="avgLength">--</span>
+                            <span class="stat-lbl">Avg Length</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num" style="color:#ffb800;text-shadow:0 0 8px #ffb800;" id="maxLength">--</span>
+                            <span class="stat-lbl">Max Length</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num" style="color:#ff6600;text-shadow:0 0 8px #ff6600;" id="minLength">--</span>
+                            <span class="stat-lbl">Min Length</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num" style="color:#ff007f;text-shadow:0 0 8px #ff007f;" id="toxRatio">--</span>
+                            <span class="stat-lbl">Toxicity Ratio</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num" style="color:#00ff88;text-shadow:0 0 8px #00ff88;" id="sentHealth">--</span>
+                            <span class="stat-lbl">Health Index</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comment Length Distribution -->
+                <div class="card">
+                    <div class="card-title">[ DATA_VISUALIZATION_2 ] Comment Length Analysis</div>
+                    <div class="chart-row">
+                        <div class="chart-container">
+                            <canvas id="lengthChart"></canvas>
+                        </div>
+                        <div style="width: 280px; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="border: 1px solid rgba(0,243,255,0.2); background: rgba(0,243,255,0.02); padding: 8px;">
+                                <div style="font-size: 12px; color: var(--cyan); margin-bottom: 6px; text-shadow: 0 0 4px var(--cyan);">LENGTH STATS</div>
+                                <div style="font-size: 20px; color: #39ff14; text-shadow: 0 0 6px #39ff14; margin-bottom: 4px;">
+                                    <span id="avgLen2">--</span> chars
+                                </div>
+                                <div style="font-size: 12px; color: rgba(0,243,255,0.6); margin-bottom: 8px;">Average</div>
+                                
+                                <div style="font-size: 16px; color: #ffb800; text-shadow: 0 0 4px #ffb800; margin-bottom: 2px;">
+                                    <span id="medianLen">--</span>
+                                </div>
+                                <div style="font-size: 12px; color: rgba(0,243,255,0.6);">Median</div>
+                            </div>
+                            <div style="border: 1px solid rgba(255,0,127,0.2); background: rgba(255,0,127,0.02); padding: 8px;">
+                                <div style="font-size: 12px; color: #ff007f; margin-bottom: 6px; text-shadow: 0 0 4px #ff007f;">CATEGORY SPLIT</div>
+                                <div id="lengthCategories" style="display: flex; flex-direction: column; gap: 4px; font-size: 13px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Toxicity Heatmap -->
+                <div class="card">
+                    <div class="card-title">[ DATA_VISUALIZATION_3 ] Sentiment vs Toxicity Cross-Analysis</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="chart-container">
+                            <canvas id="scatterChart"></canvas>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="border: 1px solid rgba(0,243,255,0.2); background: rgba(0,243,255,0.02); padding: 10px; flex: 1;">
+                                <div style="font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--lime); margin-bottom: 8px; text-shadow: 0 0 5px var(--lime);">TOXICITY BREAKDOWN</div>
+                                <div id="toxBreakdown" style="display: flex; flex-direction: column; gap: 4px; font-size: 13px;">
+                                </div>
+                            </div>
+                            <div style="border: 1px solid rgba(255,0,127,0.2); background: rgba(255,0,127,0.02); padding: 10px; flex: 1;">
+                                <div style="font-family: 'Press Start 2P', monospace; font-size: 8px; color: #ff007f; margin-bottom: 8px; text-shadow: 0 0 5px #ff007f;">QUALITY ASSESSMENT</div>
+                                <div id="qualityMetrics" style="display: flex; flex-direction: column; gap: 4px; font-size: 13px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Positive vs Negative Comparison -->
+                <div class="card">
+                    <div class="card-title">[ DATA_VISUALIZATION_4 ] Sentiment Polarity Radar</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="chart-container">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                        <div style="border: 1px solid rgba(0,243,255,0.2); background: rgba(0,243,255,0.02); padding: 12px; display: flex; flex-direction: column; justify-content: space-around;">
+                            <div>
+                                <div style="font-size: 12px; color: rgba(0,243,255,0.5); margin-bottom: 4px;">SENTIMENT STRENGTH</div>
+                                <div style="font-size: 24px; color: #39ff14; text-shadow: 0 0 8px #39ff14; font-weight: bold;" id="sentStrength">--</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: rgba(0,243,255,0.5); margin-bottom: 4px;">NEGATIVITY INDEX</div>
+                                <div style="font-size: 24px; color: #ff007f; text-shadow: 0 0 8px #ff007f; font-weight: bold;" id="negIndex">--</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: rgba(0,243,255,0.5); margin-bottom: 4px;">TOXICITY SEVERITY</div>
+                                <div style="font-size: 24px; color: #ff3333; text-shadow: 0 0 8px #ff3333; font-weight: bold;" id="toxSeverity">--</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: rgba(0,243,255,0.5); margin-bottom: 4px;">BALANCE SCORE</div>
+                                <div style="font-size: 24px; color: #ffb800; text-shadow: 0 0 8px #ffb800; font-weight: bold;" id="balanceScore">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <script>
+                // Extract comment data
+                const commentsData = [{% for c in comments %}{text:"{{ c.text | replace('"', '') }}", sentiment:"{{ c.sentiment }}", toxic:{{ c.toxic | lower }}},{% endfor %}];
+                
+                // Calculate metrics
+                function calculateMetrics() {
+                    const lengths = commentsData.map(c => c.text.length);
+                    const avgLen = Math.round(lengths.reduce((a,b) => a+b, 0) / lengths.length);
+                    const sorted = [...lengths].sort((a,b) => a-b);
+                    const medianLen = sorted[Math.floor(sorted.length/2)];
+                    const maxLen = Math.max(...lengths);
+                    const minLen = Math.min(...lengths);
+                    const toxCount = commentsData.filter(c => c.toxic).length;
+                    const toxRatio = ((toxCount / commentsData.length) * 100).toFixed(1);
+                    
+                    // Health index: positive sentiment minus toxic
+                    const pos = {{ results.positive }};
+                    const neg = {{ results.negative }};
+                    const healthIdx = Math.round(pos - (toxRatio * 0.5));
+                    
+                    // Apply to DOM
+                    document.getElementById('avgLength').textContent = avgLen;
+                    document.getElementById('maxLength').textContent = maxLen;
+                    document.getElementById('minLength').textContent = minLen;
+                    document.getElementById('avgLen2').textContent = avgLen;
+                    document.getElementById('medianLen').textContent = medianLen;
+                    document.getElementById('toxRatio').textContent = toxRatio + '%';
+                    document.getElementById('sentHealth').textContent = Math.max(0, healthIdx);
+                    
+                    // Length categories
+                    const short = lengths.filter(l => l < 50).length;
+                    const medium = lengths.filter(l => l >= 50 && l < 150).length;
+                    const long = lengths.filter(l => l >= 150).length;
+                    document.getElementById('lengthCategories').innerHTML = `
+                        <div><span style="color:#39ff14">Short (<50):</span> <span style="color:#00f3ff">${short} (${Math.round(short/commentsData.length*100)}%)</span></div>
+                        <div><span style="color:#ffb800">Medium (50-150):</span> <span style="color:#00f3ff">${medium} (${Math.round(medium/commentsData.length*100)}%)</span></div>
+                        <div><span style="color:#ff007f">Long (>150):</span> <span style="color:#00f3ff">${long} (${Math.round(long/commentsData.length*100)}%)</span></div>
+                    `;
+                    
+                    // Toxicity breakdown by sentiment
+                    const posTox = commentsData.filter(c => c.sentiment==='positive' && c.toxic).length;
+                    const neuTox = commentsData.filter(c => c.sentiment==='neutral' && c.toxic).length;
+                    const negTox = commentsData.filter(c => c.sentiment==='negative' && c.toxic).length;
+                    document.getElementById('toxBreakdown').innerHTML = `
+                        <div><span style="color:#39ff14">Positive:</span> <span style="color:#00f3ff">${posTox}</span></div>
+                        <div><span style="color:#fff">Neutral:</span> <span style="color:#00f3ff">${neuTox}</span></div>
+                        <div><span style="color:#ff007f">Negative:</span> <span style="color:#00f3ff">${negTox}</span></div>
+                    `;
+                    
+                    // Quality metrics
+                    const avgEngagement = (avgLen / maxLen * 100).toFixed(1);
+                    const clarityScore = (100 - (toxCount / commentsData.length * 100)).toFixed(1);
+                    document.getElementById('qualityMetrics').innerHTML = `
+                        <div><span style="color:#00f3ff">Engagement:</span> <span style="color:#39ff14">${avgEngagement}%</span></div>
+                        <div><span style="color:#00f3ff">Clarity:</span> <span style="color:#ffb800">${clarityScore}%</span></div>
+                        <div><span style="color:#00f3ff">Safety:</span> <span style="color:#ff007f">${(100-toxRatio).toFixed(1)}%</span></div>
+                    `;
+                    
+                    // Sentiment metrics
+                    const sentStrength = Math.round(Math.abs(pos - neg));
+                    const balScore = Math.round(pos - neg + 50);
+                    document.getElementById('sentStrength').textContent = sentStrength + '%';
+                    document.getElementById('negIndex').textContent = neg.toFixed(1) + '%';
+                    document.getElementById('toxSeverity').textContent = toxRatio + '%';
+                    document.getElementById('balanceScore').textContent = balScore;
+                    
+                    return { lengths, avgLen, medianLen, maxLen, minLen, toxRatio };
+                }
+                
+                const metrics = calculateMetrics();
+                
                 Chart.defaults.color = '#39ff14';
                 Chart.defaults.font.family = "'VT323', monospace";
                 Chart.defaults.font.size = 16;
 
+                // Original Bar Chart
                 new Chart(document.getElementById('barChart'), {
                     type: 'bar',
                     data: {
@@ -884,6 +1065,7 @@
                     }
                 });
 
+                // Original Doughnut Chart
                 new Chart(document.getElementById('doughChart'), {
                     type: 'doughnut',
                     data: {
@@ -901,6 +1083,95 @@
                             legend: { display: false },
                             tooltip: {
                                 callbacks: { label: ctx => ctx.label + ': ' + ctx.parsed + '%' }
+                            }
+                        },
+                        animation: { duration: 2000 }
+                    }
+                });
+
+                // Comment Length Distribution Chart
+                const lengthBuckets = {
+                    '0-50': metrics.lengths.filter(l => l < 50).length,
+                    '50-100': metrics.lengths.filter(l => l >= 50 && l < 100).length,
+                    '100-150': metrics.lengths.filter(l => l >= 100 && l < 150).length,
+                    '150-200': metrics.lengths.filter(l => l >= 150 && l < 200).length,
+                    '200+': metrics.lengths.filter(l => l >= 200).length,
+                };
+                
+                new Chart(document.getElementById('lengthChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(lengthBuckets),
+                        datasets: [{
+                            data: Object.values(lengthBuckets),
+                            backgroundColor: ['rgba(57,255,20,.6)','rgba(0,243,255,.6)','rgba(255,184,0,.6)','rgba(255,0,127,.6)','rgba(255,51,51,.6)'],
+                            borderColor: ['#39ff14','#00f3ff','#ffb800','#ff007f','#ff3333'],
+                            borderWidth: 2, borderRadius: 0,
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { beginAtZero: true, grid: { color: 'rgba(0,243,255,.12)' } },
+                            y: { grid: { display: false } }
+                        },
+                        animation: { duration: 1600 }
+                    }
+                });
+
+                // Scatter Chart - Sentiment vs Toxicity
+                const scatterData = commentsData.map((c, i) => ({
+                    x: c.sentiment === 'positive' ? 80 : (c.sentiment === 'neutral' ? 50 : 20),
+                    y: c.text.length,
+                    r: c.toxic ? 8 : 4,
+                    sentiment: c.sentiment
+                }));
+                
+                new Chart(document.getElementById('scatterChart'), {
+                    type: 'bubble',
+                    data: {
+                        datasets: [
+                            {data: scatterData.filter(d => d.sentiment === 'positive'), backgroundColor: 'rgba(57,255,20,.5)', label: 'Positive'},
+                            {data: scatterData.filter(d => d.sentiment === 'neutral'), backgroundColor: 'rgba(192,192,192,.5)', label: 'Neutral'},
+                            {data: scatterData.filter(d => d.sentiment === 'negative'), backgroundColor: 'rgba(255,0,127,.5)', label: 'Negative'},
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: true, labels: { color: '#39ff14' } } },
+                        scales: {
+                            x: { beginAtZero: true, title: { display: true, text: 'Sentiment', color: '#39ff14' }, grid: { color: 'rgba(0,243,255,.12)' } },
+                            y: { title: { display: true, text: 'Comment Length', color: '#39ff14' }, grid: { color: 'rgba(0,243,255,.12)' } }
+                        },
+                        animation: { duration: 1400 }
+                    }
+                });
+
+                // Radar Chart - Sentiment Polarity
+                new Chart(document.getElementById('radarChart'), {
+                    type: 'radar',
+                    data: {
+                        labels: ['Positivity', 'Neutrality', 'Negativity', 'Safety'],
+                        datasets: [{
+                            data: [{{ results.positive }}, {{ results.neutral }}, {{ results.negative }}, 100-{{ results.toxic }}],
+                            backgroundColor: 'rgba(57,255,20,.2)',
+                            borderColor: '#39ff14',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#ff007f',
+                            pointBorderColor: '#fff',
+                            pointRadius: 5,
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            r: {
+                                beginAtZero: true, max: 100,
+                                grid: { color: 'rgba(0,243,255,.15)' },
+                                ticks: { color: 'rgba(0,243,255,.5)' }
                             }
                         },
                         animation: { duration: 2000 }
